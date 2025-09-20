@@ -2,7 +2,7 @@ import numpy as np
 from tensorflow.keras.preprocessing import image
 from tensorflow import keras
 
-# Load model
+# Load model h5
 model = keras.models.load_model("MedicalClassification.h5")
 
 # Danh sách class
