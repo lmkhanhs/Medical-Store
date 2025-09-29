@@ -1,9 +1,11 @@
 package com.khanhlms.medical_store.dtos.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 import lombok.AllArgsConstructor;
 
@@ -22,6 +24,7 @@ public class ApiResponse<T> {
     private int code = 200;
     private String message;
     private T data;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Ho_Chi_Minh")
     @Builder.Default
-    private LocalDateTime timestamp = LocalDateTime.now();
+    private Date timestamp = new Date();
 }

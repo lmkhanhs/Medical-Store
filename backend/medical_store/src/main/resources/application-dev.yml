@@ -11,8 +11,7 @@ spring:
         properties:
             hibernate:
                 dialect: org.hibernate.dialect.MySQL8Dialect
-    security:
-      oauth2:
-        resourceserver:
-          jwt:
-            issuer-uri: http://localhost:8080/realms/demo
+    data:
+      redis:
+        host: 127.0.0.1
+        port: 6379

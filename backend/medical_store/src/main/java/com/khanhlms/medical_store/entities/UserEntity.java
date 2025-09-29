@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Setter
 @Getter
@@ -19,7 +20,7 @@ import java.util.List;
 @Entity
 @Table(name = "Users")
 @Builder
-public class UserEntity implements UserDetails {
+public class UserEntity extends BaseEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
@@ -27,7 +28,14 @@ public class UserEntity implements UserDetails {
     String password;
     String email;
     LocalDateTime lastLogin;
-    LocalDateTime created;
+    Boolean isActive;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user-roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+        )
+    private Set<RoleEntity> roles;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

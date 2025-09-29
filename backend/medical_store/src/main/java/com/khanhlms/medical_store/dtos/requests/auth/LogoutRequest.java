@@ -1,4 +1,4 @@
-package com.khanhlms.medical_store.dtos.requests;
+package com.khanhlms.medical_store.dtos.requests.auth;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -9,7 +9,7 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class LoginRequest {
-    String username;
-    String password;
+public class LogoutRequest {
+    String accessToken;
+    String refreshToken;
 }
