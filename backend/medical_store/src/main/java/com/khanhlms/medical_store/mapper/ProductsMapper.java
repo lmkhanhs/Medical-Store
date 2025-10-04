@@ -1,0 +1,81 @@
+package com.khanhlms.medical_store.mapper;
+
+import com.khanhlms.medical_store.dtos.products.requests.CreateProductRequest;
+import com.khanhlms.medical_store.dtos.products.response.CreateProductResponse;
+import com.khanhlms.medical_store.entities.CategoryEntity;
+import com.khanhlms.medical_store.entities.ImagesEntity;
+import com.khanhlms.medical_store.entities.ManufacturerEntity;
+import com.khanhlms.medical_store.entities.ProductsEntity;
+import com.khanhlms.medical_store.exceptions.AppException;
+import com.khanhlms.medical_store.exceptions.ErrorCode;
+import com.khanhlms.medical_store.repositories.CategoriesRepository;
+import com.khanhlms.medical_store.repositories.ManufacturerRepository;
+import com.khanhlms.medical_store.utills.CloudinaryUtils;
+import org.mapstruct.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Collections;
+import java.util.List;
+@Mapper(componentModel = "spring")
+public abstract class ProductsMapper {
+    @Autowired
+    protected CloudinaryUtils cloudinaryUtils;
+    @Autowired
+    protected ManufacturerRepository manufacturerRepository;
+    @Autowired
+    protected CategoriesRepository categoriesRepository;
+
+    @Mappings({
+            @Mapping(source = "category.name", target = "categoryName"),
+            @Mapping(source = "manufacturer.name", target = "manufacturerName"),
+            @Mapping(source = "images", target = "imageUrl", qualifiedByName = "mapImageUrl")
+    })
+    public abstract CreateProductResponse toCreateProductResponse(ProductsEntity productsEntity);
+
+    @Named("mapImageUrl")
+    protected List<String> mapImageUrl(List<ImagesEntity> images) {
+        if (images == null || images.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return images.stream()
+                .map(imagesEntity -> imagesEntity.getImageUrl())
+                .toList();
+    }
+
+    @Mappings({
+            @Mapping(source = "manufacturerId", target = "manufacturer", qualifiedByName = "mapManufacturerById"),
+            @Mapping(source = "categoryId", target = "category", qualifiedByName = "mapCategoryById"),
+            @Mapping(source = "images", target = "images", qualifiedByName = "mapImagesEntity"),
+            @Mapping(source = "price", target = "originPrice")
+    })
+    public abstract ProductsEntity toEntity(CreateProductRequest request);
+
+    @Named("mapManufacturerById")
+    protected ManufacturerEntity mapManufacturerById(String manufacturerId) {
+        if(manufacturerId == null) {return null;}
+        ManufacturerEntity manufacturer = manufacturerRepository.findById(manufacturerId)
+                .orElseThrow(() -> new AppException(ErrorCode.MANUFACTURER_NOT_FOUND));
+        return manufacturer;
+    }
+    @Named("mapCategoryById")
+    protected CategoryEntity  mapCategoryById(String categoryId) {
+        if (categoryId == null) {return null;}
+        CategoryEntity category = this.categoriesRepository.findById(categoryId)
+                .orElseThrow(()-> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
+        return category;
+    }
+    @Named("mapImagesEntity")
+    protected List<ImagesEntity> mapImagesEntity(List<MultipartFile> images) {
+        if(images == null) {return null;}
+        return images.stream()
+                .map(image -> {
+                    String imageUrl = cloudinaryUtils.uploadImageCloddy(image);
+                    ImagesEntity entity = ImagesEntity.builder()
+                            .imageUrl(imageUrl)
+                            .build();
+                    return entity;
+                })
+                .toList();
+    }
+}

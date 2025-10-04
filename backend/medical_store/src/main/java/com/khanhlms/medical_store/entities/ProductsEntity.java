@@ -22,7 +22,8 @@ public class ProductsEntity extends BaseEntity {
     String name;
     @Column(columnDefinition = "TEXT")
     String description;
-    Double price;
+    Double originPrice;
+    Double discount;
     Integer ratingAvg;
     Date productDate;
     Date expirationDate;

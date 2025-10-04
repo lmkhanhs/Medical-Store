@@ -1,5 +1,6 @@
 package com.khanhlms.medical_store.dtos.products.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.*;
@@ -17,8 +18,11 @@ import java.util.List;
 public class CreateProductResponse {
     String name;
     String description;
-    Double price;
+    Double originPrice;
+    Double discount;
+    @JsonFormat( pattern = "dd/MM/yyyy")
     Date productDate;
+    @JsonFormat(pattern = "dd/MM/yyyy")
     Date expirationDate;
     String manufacturerName;
     String categoryName;
