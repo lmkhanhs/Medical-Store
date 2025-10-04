@@ -29,10 +29,13 @@ public class ManufacturerEntity extends BaseEntity {
     String phone;
     String email;
     Date foundingDate;
-    @Lob
+    String thumbnailUrl;
+    Boolean active;
+    Boolean deleted;
+
     @Column(columnDefinition = "TEXT")
     String description;
 
     @OneToMany(mappedBy = "manufacturer", cascade = CascadeType.ALL, orphanRemoval = true)
-    Set<MedicineEntity> medicines;
+    Set<ProductsEntity> products;
 }

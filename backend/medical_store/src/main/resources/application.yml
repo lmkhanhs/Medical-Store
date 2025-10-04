@@ -8,7 +8,6 @@ app:
     clodinary:
       url: cloudinary://673758235311112:lQ-W_bCswUJHcqmGXVenasImLnY@dqtj816ds
 
-
 spring:
     application:
         name: medical_store

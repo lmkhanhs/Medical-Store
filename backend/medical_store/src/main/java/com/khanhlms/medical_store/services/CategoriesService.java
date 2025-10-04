@@ -8,7 +8,10 @@ import com.khanhlms.medical_store.repositories.CategoriesRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -23,5 +26,12 @@ public class CategoriesService {
         categoryEntity.setDeleted(false);
 
         return this.categoriesMapper.toResponse(categoriesRepository.save(categoryEntity));
+    }
+    public List<CategoryResponse> handfindAll(Pageable pageable) {
+        return this.categoriesRepository.findAll(pageable)
+                .getContent()
+                .stream()
+                .map(item -> this.categoriesMapper.toResponse(item))
+                .toList();
     }
 }

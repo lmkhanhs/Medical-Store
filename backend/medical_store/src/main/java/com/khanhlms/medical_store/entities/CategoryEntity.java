@@ -1,16 +1,9 @@
 package com.khanhlms.medical_store.entities;
 
 import jakarta.persistence.*;
-import jdk.jfr.Enabled;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.domain.Auditable;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 @Setter
@@ -36,7 +29,7 @@ public class CategoryEntity extends BaseEntity {
     Boolean active;
     Boolean deleted;
     @Column(columnDefinition = "TEXT")
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL,  orphanRemoval = true, fetch = FetchType.EAGER)
-    Set<MedicineEntity> medicines;
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL,  orphanRemoval = true)
+    Set<ProductsEntity> products;
 
 }

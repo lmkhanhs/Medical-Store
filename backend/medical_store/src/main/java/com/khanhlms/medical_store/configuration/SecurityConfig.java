@@ -28,6 +28,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import javax.crypto.spec.SecretKeySpec;
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -36,12 +37,23 @@ import java.util.List;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SecurityConfig {
+    @Value("${app.api.prefix}")
+    private String PREFIX_API ;
+
     final UserDetailServiceCustomize userDetailServiceCustomize;
     final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     final JwtDecodeCustomize jwtDecodeCustomize;
     final PasswordEncoder passwordEncoder;
 
-    private final String[] PUBLIC_END_POINT_TEST = { "/api/v1/users", "/test"};
+    private final String[] PUBLIC_END_POINT_TEST = { "/api/v1/users"};
+    private final String[] PUBLIC_END_POINT_GET = {"/categories"};
+
+    private String[] buildWithPrefix(String[] data, String prefix) {
+        return Arrays.stream(data)
+                .map(d -> prefix + d)
+                .toArray(String[]::new);
+    }
+
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
@@ -49,6 +61,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
+                        .requestMatchers(HttpMethod.GET,buildWithPrefix(PUBLIC_END_POINT_GET, PREFIX_API)).permitAll()
                         .requestMatchers(HttpMethod.POST, PUBLIC_END_POINT_TEST).permitAll()
                         .requestMatchers(HttpMethod.POST,"/api/v1/auth/**").permitAll()
                         .anyRequest().authenticated())

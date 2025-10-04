@@ -1,17 +1,11 @@
 package com.khanhlms.medical_store.entities;
 
 import jakarta.persistence.*;
-import jdk.jfr.Enabled;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.domain.Auditable;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDateTime;
-import java.util.Collection;
+import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 @Setter
 @Getter
@@ -19,9 +13,9 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "Medicines")
+@Table(name = "Products")
 @Builder
-public class MedicineEntity extends BaseEntity {
+public class ProductsEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
@@ -29,7 +23,13 @@ public class MedicineEntity extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     String description;
     Double price;
-
+    Integer ratingAvg;
+    Date productDate;
+    Date expirationDate;
+//
+    Boolean isActive;
+    Boolean isDeleted;
+//
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "manufacturer_id", nullable = false)
     ManufacturerEntity manufacturer;
@@ -37,5 +37,8 @@ public class MedicineEntity extends BaseEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id", nullable = false)
     CategoryEntity category;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    List<ImagesEntity> images;
 
 }
