@@ -46,7 +46,9 @@ public class SecurityConfig {
     final PasswordEncoder passwordEncoder;
 
     private final String[] PUBLIC_END_POINT_TEST = { "/api/v1/users"};
-    private final String[] PUBLIC_END_POINT_GET = {"/categories"};
+    private final String[] PUBLIC_END_POINT_GET = {"/categories",
+        "/products", "/products/{id}"
+    };
 
     private String[] buildWithPrefix(String[] data, String prefix) {
         return Arrays.stream(data)

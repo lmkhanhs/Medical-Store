@@ -2,6 +2,7 @@ package com.khanhlms.medical_store.mapper;
 
 import com.khanhlms.medical_store.dtos.products.requests.CreateProductRequest;
 import com.khanhlms.medical_store.dtos.products.response.CreateProductResponse;
+import com.khanhlms.medical_store.dtos.products.response.ProductResponse;
 import com.khanhlms.medical_store.entities.CategoryEntity;
 import com.khanhlms.medical_store.entities.ImagesEntity;
 import com.khanhlms.medical_store.entities.ManufacturerEntity;
@@ -25,7 +26,15 @@ public abstract class ProductsMapper {
     protected ManufacturerRepository manufacturerRepository;
     @Autowired
     protected CategoriesRepository categoriesRepository;
-
+/// /////////////
+    @Mapping(source = "images", target = "imageUrl", qualifiedByName = "mapImageUrlPrimary")
+    public abstract ProductResponse toProductResponse(ProductsEntity entity);
+    @Named("mapImageUrlPrimary")
+    protected String mapImageUrlPrimary(List<ImagesEntity> imagesEntities) {
+        if (imagesEntities == null || imagesEntities.isEmpty()) {return null;}
+        return imagesEntities.get(0).getImageUrl();
+    }
+///////////////////////////////
     @Mappings({
             @Mapping(source = "category.name", target = "categoryName"),
             @Mapping(source = "manufacturer.name", target = "manufacturerName"),
@@ -42,12 +51,14 @@ public abstract class ProductsMapper {
                 .map(imagesEntity -> imagesEntity.getImageUrl())
                 .toList();
     }
-
+/// //////////////////////
     @Mappings({
             @Mapping(source = "manufacturerId", target = "manufacturer", qualifiedByName = "mapManufacturerById"),
             @Mapping(source = "categoryId", target = "category", qualifiedByName = "mapCategoryById"),
             @Mapping(source = "images", target = "images", qualifiedByName = "mapImagesEntity"),
-            @Mapping(source = "price", target = "originPrice")
+            @Mapping(source = "price", target = "originPrice"),
+            @Mapping(source = "currency", target = "currency"),
+            @Mapping(source = "quantity", target = "quantity")
     })
     public abstract ProductsEntity toEntity(CreateProductRequest request);
 

@@ -1,5 +1,6 @@
 package com.khanhlms.medical_store.utills;
 
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 public interface BaseRedisUtils {
@@ -12,5 +13,6 @@ public interface BaseRedisUtils {
     void setTimetoLive(String key, Long expireTime, TimeUnit timeUnit);
     Object getForString(String key);
 
+    public Set<String> getKeys(String pattern);
     void deleteForString(String key);
 }

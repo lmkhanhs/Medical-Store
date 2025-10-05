@@ -17,6 +17,8 @@ public class CreateProductRequest {
     String name;
     String description;
     Double price;
+    String currency;
+    Integer quantity;
     Date productDate;
     Date expirationDate;
     String manufacturerId;

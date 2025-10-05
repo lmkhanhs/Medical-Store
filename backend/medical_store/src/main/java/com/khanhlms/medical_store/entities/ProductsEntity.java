@@ -24,9 +24,15 @@ public class ProductsEntity extends BaseEntity {
     String description;
     Double originPrice;
     Double discount;
-    Integer ratingAvg;
+    Double ratingAvg;
+    @Column(nullable = false)
     Date productDate;
+    @Column(nullable = false)
     Date expirationDate;
+    Integer quantity;
+    String currency;
+    Integer soldQuantity;
+    Integer position;
 //
     Boolean isActive;
     Boolean isDeleted;

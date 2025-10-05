@@ -7,6 +7,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @Component
@@ -32,7 +33,7 @@ public class BaseRedisUtillsIml implements BaseRedisUtils {
 
     @Override
     public void set(String key, Boolean value, Long expireTime, TimeUnit timeUnit) {
-        this.redisTemplate.opsForValue().setGet(key, value, expireTime, timeUnit);
+        this.redisTemplate.opsForValue().set(key, value, expireTime, timeUnit);
     }
 
     @Override
@@ -53,5 +54,10 @@ public class BaseRedisUtillsIml implements BaseRedisUtils {
     @Override
     public void deleteForString(String key) {
         this.redisTemplate.delete(key);
+    }
+
+    @Override
+    public Set<String> getKeys(String pattern) {
+        return this.redisTemplate.keys(pattern);
     }
 }
