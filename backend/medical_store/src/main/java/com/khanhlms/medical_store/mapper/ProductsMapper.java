@@ -1,12 +1,10 @@
 package com.khanhlms.medical_store.mapper;
 
 import com.khanhlms.medical_store.dtos.products.requests.CreateProductRequest;
+import com.khanhlms.medical_store.dtos.products.requests.IngredientRequest;
 import com.khanhlms.medical_store.dtos.products.response.CreateProductResponse;
 import com.khanhlms.medical_store.dtos.products.response.ProductResponse;
-import com.khanhlms.medical_store.entities.CategoryEntity;
-import com.khanhlms.medical_store.entities.ImagesEntity;
-import com.khanhlms.medical_store.entities.ManufacturerEntity;
-import com.khanhlms.medical_store.entities.ProductsEntity;
+import com.khanhlms.medical_store.entities.*;
 import com.khanhlms.medical_store.exceptions.AppException;
 import com.khanhlms.medical_store.exceptions.ErrorCode;
 import com.khanhlms.medical_store.repositories.CategoriesRepository;

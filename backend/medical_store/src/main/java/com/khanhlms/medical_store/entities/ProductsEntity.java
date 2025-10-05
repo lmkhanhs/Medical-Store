@@ -33,10 +33,19 @@ public class ProductsEntity extends BaseEntity {
     String currency;
     Integer soldQuantity;
     Integer position;
+    String sideEffect; // tác dụng phụ
+    String note;
+    String preserve;
+    @Column(name = "product_usage")
+    String usage; // cách sử dụng
+    String benefit; // lợi ích
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    List<IngredientEntity> ingredients;
 //
     Boolean isActive;
     Boolean isDeleted;
 //
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "manufacturer_id", nullable = false)
     ManufacturerEntity manufacturer;
@@ -47,5 +56,8 @@ public class ProductsEntity extends BaseEntity {
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     List<ImagesEntity> images;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    List<QuestionEntity> questions;
 
 }

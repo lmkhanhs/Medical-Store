@@ -1,6 +1,7 @@
 package com.khanhlms.medical_store.dtos.products.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.khanhlms.medical_store.dtos.products.requests.IngredientRequest;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.*;
@@ -21,6 +22,12 @@ public class CreateProductResponse {
     Double originPrice;
     Double discount;
     String currency;
+    String usage; // cách sử dụng
+    String benefit; // lợi ích
+    List<IngredientRequest> ingredients; // thanf phan
+    String sideEffect; // tác dụng phụ
+    String note;
+    String preserve;
     Integer quantity;
     @JsonFormat( pattern = "dd/MM/yyyy")
     Date productDate;

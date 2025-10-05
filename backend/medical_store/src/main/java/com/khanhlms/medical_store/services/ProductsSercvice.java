@@ -3,8 +3,10 @@ package com.khanhlms.medical_store.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.khanhlms.medical_store.dtos.products.requests.CreateProductRequest;
+import com.khanhlms.medical_store.dtos.products.requests.IngredientRequest;
 import com.khanhlms.medical_store.dtos.products.response.CreateProductResponse;
 import com.khanhlms.medical_store.dtos.products.response.ProductResponse;
+import com.khanhlms.medical_store.entities.IngredientEntity;
 import com.khanhlms.medical_store.entities.ProductsEntity;
 import com.khanhlms.medical_store.exceptions.AppException;
 import com.khanhlms.medical_store.exceptions.ErrorCode;
@@ -31,13 +33,14 @@ public class ProductsSercvice {
     ProductsMapper  productsMapper;
     BaseRedisUtils redisUtils;
     private ObjectMapper objectMapper = new  ObjectMapper();
-    public CreateProductResponse createProduct(CreateProductRequest request) {
+    public CreateProductResponse createProduct(CreateProductRequest request, List<IngredientRequest>  ingredients) {
         ProductsEntity productsEntity = this.productsMapper.toEntity(request);
         Date productDate = productsEntity.getProductDate();
         Date expirationDate = productsEntity.getExpirationDate();
         if (productDate.getTime() > expirationDate.getTime()) {
             throw new AppException(ErrorCode.EXPIRERATION_EXCEPTION);
         }
+        productsEntity.setIngredients(mapIngredientEntity(ingredients));
         productsEntity.setIsActive(true);
         productsEntity.setIsDeleted(false);
         productsEntity.setDiscount(0.0);
@@ -50,6 +53,21 @@ public class ProductsSercvice {
 
         return this.productsMapper.toCreateProductResponse(productRepository.save(productsEntity));
     }
+
+    private List<IngredientEntity> mapIngredientEntity(List<IngredientRequest> ingredientRequests){
+        if (ingredientRequests == null || ingredientRequests.isEmpty()) {return Collections.emptyList();}
+        return ingredientRequests.stream()
+                .map(ingredientRequest -> {
+                    return  IngredientEntity.builder()
+                            .name(ingredientRequest.getName())
+                            .description(ingredientRequest.getDescription())
+                            .amount(ingredientRequest.getAmount())
+                            .unit(ingredientRequest.getUnit())
+                            .build();
+                })
+                .toList();
+    }
+
     public List<ProductResponse> handGetProduct( String redisKey,Pageable pageable) {
         List<ProductResponse> result = null;
         if(Objects.isNull(this.redisUtils.getForString(redisKey))) {
@@ -78,4 +96,5 @@ public class ProductsSercvice {
         }
         return result;
     }
+
 }

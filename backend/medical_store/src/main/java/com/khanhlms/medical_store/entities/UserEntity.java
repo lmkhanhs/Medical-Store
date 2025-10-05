@@ -27,8 +27,14 @@ public class UserEntity extends BaseEntity implements UserDetails {
     String username;
     String password;
     String email;
+    String fullName;
     LocalDateTime lastLogin;
     Boolean isActive;
+    String avatarUrl;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<QuestionEntity> questions;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user-roles",

@@ -19,6 +19,11 @@ public class CreateProductRequest {
     Double price;
     String currency;
     Integer quantity;
+    String usage; // cách sử dụng
+    String benefit; // lợi ích
+    String sideEffect; // tác dụng phụ
+    String note;
+    String preserve;
     Date productDate;
     Date expirationDate;
     String manufacturerId;
