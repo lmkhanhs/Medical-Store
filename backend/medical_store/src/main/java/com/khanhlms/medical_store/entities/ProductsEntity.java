@@ -24,6 +24,7 @@ public class ProductsEntity extends BaseEntity {
     String description;
     Double originPrice;
     Double discount;
+    Boolean precription;
     Double ratingAvg;
     @Column(nullable = false)
     Date productDate;
@@ -59,5 +60,8 @@ public class ProductsEntity extends BaseEntity {
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     List<QuestionEntity> questions;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    List<FrequentlyEntity>  frequently;
 
 }

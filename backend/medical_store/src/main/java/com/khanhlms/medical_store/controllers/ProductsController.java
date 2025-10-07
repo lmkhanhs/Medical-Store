@@ -2,14 +2,21 @@ package com.khanhlms.medical_store.controllers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.khanhlms.medical_store.dtos.answers.request.CreateAnswersRequest;
+import com.khanhlms.medical_store.dtos.answers.response.AnswerResponse;
+import com.khanhlms.medical_store.dtos.frequently.request.CreateFrequentlyRequest;
+import com.khanhlms.medical_store.dtos.frequently.response.FrequentlyResponse;
 import com.khanhlms.medical_store.dtos.products.requests.CreateProductRequest;
 import com.khanhlms.medical_store.dtos.products.requests.IngredientRequest;
 import com.khanhlms.medical_store.dtos.products.response.CreateProductResponse;
+import com.khanhlms.medical_store.dtos.products.response.DetailProduct;
 import com.khanhlms.medical_store.dtos.products.response.ProductResponse;
 import com.khanhlms.medical_store.dtos.questions.request.CreateQuestionRequest;
 import com.khanhlms.medical_store.dtos.questions.response.QuestionResponse;
 import com.khanhlms.medical_store.dtos.response.ApiResponse;
 import com.khanhlms.medical_store.entities.UserEntity;
+import com.khanhlms.medical_store.services.AnswersService;
+import com.khanhlms.medical_store.services.FrequentlyService;
 import com.khanhlms.medical_store.services.ProductsSercvice;
 import com.khanhlms.medical_store.services.QuestionService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,6 +46,9 @@ public class ProductsController {
 
     ProductsSercvice productsSercvice;
     QuestionService  questionService;
+    AnswersService answersService;
+    FrequentlyService frequentlyService;
+
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping(value = "/products", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<CreateProductResponse>> createProduct(
@@ -89,6 +99,42 @@ public class ProductsController {
         return ApiResponse.<QuestionResponse>builder()
                 .message("Create question successfully")
                 .data(this.questionService.handCreateQuestion(productId, username ,createQuestionRequest ))
+                .build();
+    }
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/products/{id}/questions/{id_question}/answers")
+    public ApiResponse<AnswerResponse> createAnswers(
+        @PathVariable("id") String productId,
+        @PathVariable("id_question") String questionId,
+        @RequestBody CreateAnswersRequest createAnswersRequest
+    ){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        return ApiResponse.<AnswerResponse>builder()
+                .message("Create answer successfully")
+                .code(201)
+                .data(this.answersService.handCreateAnswer(productId, username,questionId,createAnswersRequest))
+                .build();
+    }
+    @GetMapping("/products/detail/{id}")
+    public ApiResponse<DetailProduct> detailProduct(@PathVariable("id") String productId) {
+        return ApiResponse.<DetailProduct>builder()
+                .code(200)
+                .message("find detail product successfully!")
+                .data(this.productsSercvice.handGetDetailProduct(productId))
+                .build();
+    }
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PostMapping("/products/{id}/frequentlys")
+    public ApiResponse<FrequentlyResponse> creareFrequently(
+            @PathVariable("id") String productId,
+            @RequestBody CreateFrequentlyRequest createFrequentlyRequest) {
+        return ApiResponse.<FrequentlyResponse>builder()
+                .code(201)
+                .message("create frequently for product is successfully!")
+                .data(this.frequentlyService.handCrateFrequently(productId, createFrequentlyRequest))
                 .build();
     }
 }

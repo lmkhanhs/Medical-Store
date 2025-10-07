@@ -3,7 +3,10 @@ package com.khanhlms.medical_store.mapper;
 import com.khanhlms.medical_store.dtos.products.requests.CreateProductRequest;
 import com.khanhlms.medical_store.dtos.products.requests.IngredientRequest;
 import com.khanhlms.medical_store.dtos.products.response.CreateProductResponse;
+import com.khanhlms.medical_store.dtos.products.response.DetailProduct;
+import com.khanhlms.medical_store.dtos.products.response.IngredientResponse;
 import com.khanhlms.medical_store.dtos.products.response.ProductResponse;
+import com.khanhlms.medical_store.dtos.questions.response.QuestionResponse;
 import com.khanhlms.medical_store.entities.*;
 import com.khanhlms.medical_store.exceptions.AppException;
 import com.khanhlms.medical_store.exceptions.ErrorCode;
@@ -24,8 +27,13 @@ public abstract class ProductsMapper {
     protected ManufacturerRepository manufacturerRepository;
     @Autowired
     protected CategoriesRepository categoriesRepository;
+    @Autowired
+    protected QuestionMapper  questionMapper;
+
 /// /////////////
+
     @Mapping(source = "images", target = "imageUrl", qualifiedByName = "mapImageUrlPrimary")
+    @Mapping(source = "id", target = "id")
     public abstract ProductResponse toProductResponse(ProductsEntity entity);
     @Named("mapImageUrlPrimary")
     protected String mapImageUrlPrimary(List<ImagesEntity> imagesEntities) {
@@ -36,7 +44,8 @@ public abstract class ProductsMapper {
     @Mappings({
             @Mapping(source = "category.name", target = "categoryName"),
             @Mapping(source = "manufacturer.name", target = "manufacturerName"),
-            @Mapping(source = "images", target = "imageUrl", qualifiedByName = "mapImageUrl")
+            @Mapping(source = "images", target = "imageUrl", qualifiedByName = "mapImageUrl"),
+
     })
     public abstract CreateProductResponse toCreateProductResponse(ProductsEntity productsEntity);
 
@@ -84,6 +93,36 @@ public abstract class ProductsMapper {
                             .imageUrl(imageUrl)
                             .build();
                     return entity;
+                })
+                .toList();
+    }
+    /// ///////////////////////////////////
+    @Mappings({
+            @Mapping(source = "manufacturer.name", target = "manufacturer"),
+            @Mapping(source = "category.name", target = "category"),
+            @Mapping(source = "images", target = "images", qualifiedByName = "mapImageUrl"),
+            @Mapping(source = "questions", target = "questions", qualifiedByName = "mapQuestions"),
+            @Mapping(source = "manufacturer.id", target = "manufactureId")
+    })
+    public abstract DetailProduct toDetailProduct(ProductsEntity entity);
+    @Named("mapQuestions")
+    protected List<QuestionResponse> mapQuestions(List<QuestionEntity> questions) {
+        if (questions == null) {return Collections.emptyList();}
+        return questions.stream()
+                .map(questionEntity -> this.questionMapper.toQuestionResponse(questionEntity))
+                .toList();
+    }
+    @Named("mapIngredientToResponse")
+    protected List<IngredientResponse> mapIngredientToResponse(List<IngredientEntity> ingredients) {
+        if (ingredients == null) {return Collections.emptyList();}
+        return ingredients.stream()
+                .map(ingredientEntity -> {
+                    return IngredientResponse.builder()
+                            .name(ingredientEntity.getName())
+                            .description(ingredientEntity.getDescription())
+                            .unit(ingredientEntity.getUnit())
+                            .amount(ingredientEntity.getAmount())
+                            .build();
                 })
                 .toList();
     }

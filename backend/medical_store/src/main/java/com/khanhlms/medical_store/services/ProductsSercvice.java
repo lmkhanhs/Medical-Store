@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.khanhlms.medical_store.dtos.products.requests.CreateProductRequest;
 import com.khanhlms.medical_store.dtos.products.requests.IngredientRequest;
 import com.khanhlms.medical_store.dtos.products.response.CreateProductResponse;
+import com.khanhlms.medical_store.dtos.products.response.DetailProduct;
 import com.khanhlms.medical_store.dtos.products.response.ProductResponse;
 import com.khanhlms.medical_store.entities.IngredientEntity;
 import com.khanhlms.medical_store.entities.ProductsEntity;
@@ -49,6 +50,9 @@ public class ProductsSercvice {
         productsEntity.setPosition((int)this.productRepository.count());
         if (productsEntity.getImages() != null) {
             productsEntity.getImages().forEach(img -> img.setProduct(productsEntity));
+        }
+        if (productsEntity.getIngredients() != null) {
+            productsEntity.getIngredients().forEach(ingredient -> ingredient.setProduct(productsEntity));
         }
 
         return this.productsMapper.toCreateProductResponse(productRepository.save(productsEntity));
@@ -96,5 +100,9 @@ public class ProductsSercvice {
         }
         return result;
     }
-
+    public DetailProduct handGetDetailProduct(String productId) {
+        ProductsEntity product = this.productRepository.findById(productId)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+        return productsMapper.toDetailProduct(product);
+    }
 }

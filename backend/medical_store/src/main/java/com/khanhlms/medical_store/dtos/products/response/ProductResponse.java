@@ -15,6 +15,7 @@ import java.util.List;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProductResponse {
+    String id;
     String name;
     String description;
     Double originPrice;

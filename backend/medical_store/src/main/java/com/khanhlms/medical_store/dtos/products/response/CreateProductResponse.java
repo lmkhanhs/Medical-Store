@@ -17,11 +17,13 @@ import java.util.List;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CreateProductResponse {
+    String id;
     String name;
     String description;
     Double originPrice;
     Double discount;
     String currency;
+    Boolean precription;
     String usage; // cách sử dụng
     String benefit; // lợi ích
     List<IngredientRequest> ingredients; // thanf phan

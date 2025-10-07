@@ -36,6 +36,6 @@ public class QuestionService {
         ProductsEntity product = this.productRepository.findById(productID)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
         questionEntity.setProduct(product);
-        return this.questionMapper.questionResponse(this.questionRepository.save(questionEntity)) ;
+        return this.questionMapper.toQuestionResponse(this.questionRepository.save(questionEntity)) ;
     }
 }

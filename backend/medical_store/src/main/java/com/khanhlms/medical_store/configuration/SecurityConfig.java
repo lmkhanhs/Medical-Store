@@ -47,7 +47,7 @@ public class SecurityConfig {
 
     private final String[] PUBLIC_END_POINT_TEST = { "/api/v1/users"};
     private final String[] PUBLIC_END_POINT_GET = {"/categories",
-        "/products", "/products/{id}"
+        "/products", "/products/detail/{id}"
     };
 
     private String[] buildWithPrefix(String[] data, String prefix) {

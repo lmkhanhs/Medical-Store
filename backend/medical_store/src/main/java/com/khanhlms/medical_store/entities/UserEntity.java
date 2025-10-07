@@ -31,6 +31,8 @@ public class UserEntity extends BaseEntity implements UserDetails {
     LocalDateTime lastLogin;
     Boolean isActive;
     String avatarUrl;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<AnswersEntity> answers;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     List<QuestionEntity> questions;
