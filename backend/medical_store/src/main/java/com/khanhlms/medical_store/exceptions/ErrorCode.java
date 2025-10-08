@@ -16,6 +16,7 @@ public enum ErrorCode {
     USER_NOT_EXISTED(1004, "user not existed", HttpStatus.BAD_REQUEST),
     PRODUCT_NOT_FOUND(1005, "product not found", HttpStatus.BAD_REQUEST),
     QUESTION_NOT_FOUND(1006, "question not found", HttpStatus.BAD_REQUEST),
+    INVALID_REQUEST(1007, "invalid request", HttpStatus.BAD_REQUEST),
     ;
     ErrorCode(int code, String message, HttpStatus httpStatus){
         this.code = code;

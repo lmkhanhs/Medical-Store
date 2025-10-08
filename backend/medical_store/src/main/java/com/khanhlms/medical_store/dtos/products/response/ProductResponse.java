@@ -21,7 +21,7 @@ public class ProductResponse {
     Double originPrice;
     Integer quantity;
     Integer soldQuantity;
-    Double discount;
+//    Double discount;
     Integer ratingAvg;
     String imageUrl;
     @JsonFormat( pattern = "dd/MM/yyyy")

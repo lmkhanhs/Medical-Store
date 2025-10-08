@@ -32,6 +32,9 @@ public class UserEntity extends BaseEntity implements UserDetails {
     Boolean isActive;
     String avatarUrl;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<CartItemEntity> cartItems;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     List<AnswersEntity> answers;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)

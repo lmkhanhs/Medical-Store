@@ -23,9 +23,11 @@ public class ProductsEntity extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     String description;
     Double originPrice;
-    Double discount;
+    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    DiscountEntity discount;
     Boolean precription;
     Double ratingAvg;
+    String unit;
     @Column(nullable = false)
     Date productDate;
     @Column(nullable = false)
@@ -63,5 +65,8 @@ public class ProductsEntity extends BaseEntity {
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     List<FrequentlyEntity>  frequently;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CartItemEntity> cartItems;
 
 }

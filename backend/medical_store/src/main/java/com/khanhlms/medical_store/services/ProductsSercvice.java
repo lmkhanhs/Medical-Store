@@ -44,7 +44,6 @@ public class ProductsSercvice {
         productsEntity.setIngredients(mapIngredientEntity(ingredients));
         productsEntity.setIsActive(true);
         productsEntity.setIsDeleted(false);
-        productsEntity.setDiscount(0.0);
         productsEntity.setRatingAvg(0.0);
         productsEntity.setSoldQuantity(0);
         productsEntity.setPosition((int)this.productRepository.count());

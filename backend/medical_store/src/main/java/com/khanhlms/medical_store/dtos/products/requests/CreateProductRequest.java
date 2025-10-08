@@ -29,5 +29,6 @@ public class CreateProductRequest {
     Date expirationDate;
     String manufacturerId;
     String categoryId;
+    String unit;
     List<MultipartFile> images;
 }

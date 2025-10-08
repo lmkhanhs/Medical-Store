@@ -21,7 +21,6 @@ public class CreateProductResponse {
     String name;
     String description;
     Double originPrice;
-    Double discount;
     String currency;
     Boolean precription;
     String usage; // cách sử dụng
