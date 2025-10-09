@@ -80,7 +80,7 @@ public class ProductsSercvice {
                     .toList();
             try {
                 String valueString = this.objectMapper.writeValueAsString(result);
-                this.redisUtils.set(redisKey,valueString, 3600l,  TimeUnit.SECONDS);
+                this.redisUtils.set(redisKey,valueString, 1l,  TimeUnit.SECONDS);
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }
@@ -103,5 +103,11 @@ public class ProductsSercvice {
         ProductsEntity product = this.productRepository.findById(productId)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
         return productsMapper.toDetailProduct(product);
+    }
+    public List<ProductResponse> getByKeyword(String keyword, Pageable pageable) {
+        if (keyword.equals("")) return Collections.emptyList();
+        return this.productRepository.getProductsByKeyword(keyword).stream()
+                .map(product -> this.productsMapper.toProductResponse(product))
+                .toList();
     }
 }

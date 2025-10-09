@@ -149,5 +149,17 @@ public class ProductsController {
                 .data(this.discountService.handCreateDiscount(productId, createDiscountRequest))
                 .build();
     }
-
+    @GetMapping("/products/search")
+    public ApiResponse<List<ProductResponse>> search(
+            @RequestParam(defaultValue = "") String keyword,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "50") Integer size
+    ) {
+        log.warn("page: {}, size: {}, keyword {}", page, size, keyword);
+        return ApiResponse.<List<ProductResponse>>builder()
+                .code(200)
+                .message("search product by keyword successfully")
+                .data(this.productsSercvice.getByKeyword(keyword, PageRequest.of(page, size)))
+                .build();
+    }
 }
