@@ -21,7 +21,6 @@ public class ProductCustomImpl implements ProductCustom {
             SELECT * FROM products
             WHERE LOWER(name) LIKE LOWER(CONCAT('%', :keyword, '%'))
                OR LOWER(benefit) LIKE LOWER(CONCAT('%', :keyword, '%'))
-               OR LOWER(description) LIKE LOWER(CONCAT('%', :keyword, '%'))
                AND is_active = 1
                AND is_deleted = 0
             ORDER BY position ASC
