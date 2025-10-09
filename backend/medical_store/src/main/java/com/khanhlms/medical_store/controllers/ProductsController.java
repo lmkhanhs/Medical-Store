@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.khanhlms.medical_store.dtos.answers.request.CreateAnswersRequest;
 import com.khanhlms.medical_store.dtos.answers.response.AnswerResponse;
+import com.khanhlms.medical_store.dtos.discounts.request.CreateDiscountRequest;
+import com.khanhlms.medical_store.dtos.discounts.response.CreateDiscountResponse;
 import com.khanhlms.medical_store.dtos.frequently.request.CreateFrequentlyRequest;
 import com.khanhlms.medical_store.dtos.frequently.response.FrequentlyResponse;
 import com.khanhlms.medical_store.dtos.products.requests.CreateProductRequest;
@@ -14,11 +16,7 @@ import com.khanhlms.medical_store.dtos.products.response.ProductResponse;
 import com.khanhlms.medical_store.dtos.questions.request.CreateQuestionRequest;
 import com.khanhlms.medical_store.dtos.questions.response.QuestionResponse;
 import com.khanhlms.medical_store.dtos.response.ApiResponse;
-import com.khanhlms.medical_store.entities.UserEntity;
-import com.khanhlms.medical_store.services.AnswersService;
-import com.khanhlms.medical_store.services.FrequentlyService;
-import com.khanhlms.medical_store.services.ProductsSercvice;
-import com.khanhlms.medical_store.services.QuestionService;
+import com.khanhlms.medical_store.services.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +30,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -48,6 +45,7 @@ public class ProductsController {
     QuestionService  questionService;
     AnswersService answersService;
     FrequentlyService frequentlyService;
+    DiscountService  discountService;
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping(value = "/products", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -137,4 +135,19 @@ public class ProductsController {
                 .data(this.frequentlyService.handCrateFrequently(productId, createFrequentlyRequest))
                 .build();
     }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PostMapping("/products/{id}/discounts")
+    public ApiResponse<CreateDiscountResponse> createDiscount(
+            @PathVariable("id") String productId,
+            @RequestBody CreateDiscountRequest createDiscountRequest
+    ){
+        return ApiResponse.<CreateDiscountResponse>builder()
+                .code(201)
+                .message("create discount for product is successfully!")
+                .data(this.discountService.handCreateDiscount(productId, createDiscountRequest))
+                .build();
+    }
+
 }
