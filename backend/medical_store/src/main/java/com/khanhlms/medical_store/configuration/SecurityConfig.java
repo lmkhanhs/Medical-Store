@@ -63,6 +63,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
+                        .requestMatchers("/uploads/**").permitAll()
                         .requestMatchers(HttpMethod.GET,buildWithPrefix(PUBLIC_END_POINT_GET, PREFIX_API)).permitAll()
                         .requestMatchers(HttpMethod.POST, PUBLIC_END_POINT_TEST).permitAll()
                         .requestMatchers(HttpMethod.POST,"/api/v1/auth/**").permitAll()
