@@ -17,13 +17,37 @@ const API_BASE = 'http://127.0.0.1:5000';
 
 const checkApiHealth = async () => {
   try {
-    const response = await fetch(`${API_BASE}/api/health`);
+    const response = await fetch(`${API_BASE}/api/health`, {
+      headers: { Accept: 'application/json' }
+    });
     const data = await response.json();
     return data.status === 'healthy' && data.model_loaded;
   } catch (error) {
     console.error('API health check failed:', error);
     return false;
   }
+};
+
+
+const normalizeApiResult = (data) => {
+  const vi = data?.prediction_vi;
+  const en = data?.prediction_en || data?.prediction;
+
+  const confNum = typeof data?.confidence === 'number'
+    ? data.confidence
+    : Number(data?.confidence);
+
+  const classIndex = (data?.class_index ?? data?.classIndex);
+
+  const normalized = {
+    prediction_vi: vi ?? null,
+    prediction_en: en ?? null,
+    class_index: typeof classIndex === 'number' ? classIndex : null,
+    prediction: vi || data?.prediction || en || null,
+    confidence: Number.isFinite(confNum) ? confNum : null
+  };
+
+  return normalized;
 };
 
 const CameraModal = ({ open, onClose, onImageCaptured }) => {
@@ -55,7 +79,7 @@ const CameraModal = ({ open, onClose, onImageCaptured }) => {
       const mediaStream = await navigator.mediaDevices.getUserMedia({
         video: {
           width: { ideal: 640 },
-          height: { ideal: 480 },
+        height: { ideal: 480 },
           facingMode: 'environment'
         },
         audio: false
@@ -138,12 +162,16 @@ const CameraModal = ({ open, onClose, onImageCaptured }) => {
         throw new Error(data?.error || `Lỗi server: ${response.status}`);
       }
 
-      if (!data.prediction || data.confidence === undefined) {
+
+      
+      const normalized = normalizeApiResult(data);
+
+      if (!normalized.prediction || normalized.confidence === null) {
         throw new Error('Dữ liệu trả về không hợp lệ');
       }
 
-      setResult(data);
-      onImageCaptured && onImageCaptured(data);
+      setResult(normalized);
+      onImageCaptured && onImageCaptured(normalized);
     } catch (err) {
       console.error('Process image error:', err);
       setError('Lỗi khi xử lý ảnh: ' + err.message);
@@ -183,8 +211,13 @@ const CameraModal = ({ open, onClose, onImageCaptured }) => {
             <Typography variant="body1" component="div">
               <strong>Thiết bị y tế được nhận diện:</strong> {result.prediction}
             </Typography>
+            {result.prediction_en && (
+              <Typography variant="body2" color="text.secondary">
+                (Tiếng Anh: {result.prediction_en})
+              </Typography>
+            )}
             <Typography variant="body2" color="text.secondary">
-              Độ tin cậy: <strong>{result.confidence?.toFixed?.(1)}%</strong>
+              Độ tin cậy: <strong>{Number(result.confidence).toFixed(1)}%</strong>
             </Typography>
           </Alert>
         )}
