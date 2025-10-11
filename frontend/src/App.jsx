@@ -8,7 +8,11 @@ import ConsultPage from './pages/ConsultPage';
 import ProductDetail from './pages/ProductDetail';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Admin from './pages/Admin';
+import AdminDashboard from './pages/Admin/AdminDashboard';
 import SearchResults from './components/SearchResults';
+import ProtectedRoute from './components/ProtectedRoute';
+import ProductsOverview from './pages/ProductsOverview';
 import './App.css';
 
 function App() {
@@ -23,22 +27,35 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <Header onSearch={handleSearch} />
-        <main>
-          <Routes>
-            <Route path="/" element={
-              searchQuery ? 
-                <SearchResults searchQuery={searchQuery} searchResults={searchResults} /> : 
-                <HomePage />
-            } />
-            <Route path="/category/:slug" element={<CategoryPage />} />
-            <Route path="/consult" element={<ConsultPage />} />
-            <Route path="/product/:id" element={<ProductDetail />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-          </Routes>
-        </main>
-        <Footer />
+        <Routes>
+          <Route path="/admin/*" element={
+            <ProtectedRoute requiredRole="ADMIN">
+              <Admin />
+            </ProtectedRoute>
+          } />
+          <Route path="/*" element={
+            <>
+              <Header onSearch={handleSearch} />
+              <main>
+                <Routes>
+                  <Route path="/" element={
+                    searchQuery ? 
+                      <SearchResults searchQuery={searchQuery} searchResults={searchResults} /> : 
+                      <HomePage />
+                  } />
+                  <Route path="/category/:slug" element={<CategoryPage />} />
+                  <Route path="/consult" element={<ConsultPage />} />
+                  <Route path="/product/:id" element={<ProductDetail />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
+                  <Route path="/products" element={<ProductsOverview />} />
+                  <Route path="/search" element={<SearchResults />} />
+                </Routes>
+              </main>
+              <Footer />
+            </>
+          } />
+        </Routes>
       </div>
     </Router>
   );

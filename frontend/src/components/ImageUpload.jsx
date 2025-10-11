@@ -22,7 +22,9 @@ const API_BASE = 'http://127.0.0.1:5000';
 
 const checkApiHealth = async () => {
   try {
-    const response = await fetch(`${API_BASE}/api/health`);
+    const response = await fetch(`${API_BASE}/api/health`, {
+      headers: { Accept: 'application/json' }
+    });
     const data = await response.json();
     return data.status === 'healthy' && data.model_loaded;
   } catch (error) {
@@ -30,6 +32,25 @@ const checkApiHealth = async () => {
     return false;
   }
 };
+
+
+
+const normalizeApiResult = (data) => {
+  const vi = data?.prediction_vi;
+  const en = data?.prediction_en || data?.prediction; 
+  const confNum = typeof data?.confidence === 'number' ? data.confidence : Number(data?.confidence);
+  const classIndex = (data?.class_index ?? data?.classIndex);
+
+  return {
+    prediction: vi || data?.prediction || en || null, 
+    prediction_vi: vi ?? null,
+    prediction_en: en ?? null,
+    class_index: typeof classIndex === 'number' ? classIndex : null,
+    confidence: Number.isFinite(confNum) ? confNum : null
+  };
+};
+
+const formatConfidence = (v) => (Number.isFinite(Number(v)) ? Number(v).toFixed(1) : '-');
 
 const ImageUpload = ({ open, onClose, onImageProcessed }) => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -94,7 +115,7 @@ const ImageUpload = ({ open, onClose, onImageProcessed }) => {
 
       const response = await fetch(`${API_BASE}/api/classify-image`, {
         method: 'POST',
-        body: formData,
+        body: formData
       });
 
       let data;
@@ -109,12 +130,15 @@ const ImageUpload = ({ open, onClose, onImageProcessed }) => {
         throw new Error(data?.error || `Lỗi server: ${response.status}`);
       }
 
-      if (!data.prediction || data.confidence === undefined) {
+      
+      const normalized = normalizeApiResult(data);
+
+      if (!normalized.prediction || normalized.confidence === null) {
         throw new Error('Dữ liệu trả về không hợp lệ');
       }
 
-      setResult(data);
-      onImageProcessed && onImageProcessed(data);
+      setResult(normalized);
+      onImageProcessed && onImageProcessed(normalized);
     } catch (err) {
       console.error('Process image error:', err);
       setError('Lỗi khi xử lý ảnh: ' + err.message);
@@ -158,9 +182,14 @@ const ImageUpload = ({ open, onClose, onImageProcessed }) => {
             <Typography variant="body1" component="div">
               <strong>Thiết bị y tế được nhận diện:</strong> {result.prediction}
             </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Độ tin cậy: <strong>{result.confidence?.toFixed?.(1)}%</strong>
-            </Typography>
+            {result.prediction_en && (
+              <Typography variant="body2" color="text.secondary">
+                (Tiếng Anh: {result.prediction_en})
+              </Typography>
+            )}
+            {/* <Typography variant="body2" color="text.secondary">
+              Độ tin cậy: <strong>{formatConfidence(result.confidence)}%</strong>
+            </Typography> */}
           </Alert>
         )}
 
@@ -236,6 +265,7 @@ const ImageUpload = ({ open, onClose, onImageProcessed }) => {
                 setResult(null);
               }}
               color="secondary"
+              disabled={isLoading}
             >
               Chọn lại
             </Button>

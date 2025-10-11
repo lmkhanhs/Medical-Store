@@ -1,7 +1,5 @@
-# Normalize line endings
 * text=auto eol=lf
 
-# Common text files
 *.js     text eol=lf
 *.jsx    text eol=lf
 *.ts     text eol=lf
@@ -14,11 +12,9 @@
 *.yaml   text eol=lf
 *.md     text eol=lf
 
-# Windows scripts
 *.bat    text eol=crlf
 *.cmd    text eol=crlf
 
-# Binary files (no line ending conversion)
 *.png    binary
 *.jpg    binary
 *.jpeg   binary

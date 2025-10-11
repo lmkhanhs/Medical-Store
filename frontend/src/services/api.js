@@ -6,8 +6,7 @@ const api = axios.create({
 });
 
 export async function getProductsByCategory(categoryName) {
-  // Adjust endpoint to match your Spring backend if needed
-  // Example supports: GET /products?category=<name>
+
   const response = await api.get('/products', {
     params: { category: categoryName }
   });
