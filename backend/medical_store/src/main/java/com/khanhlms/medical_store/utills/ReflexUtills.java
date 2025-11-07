@@ -1,7 +1,4 @@
 package com.khanhlms.medical_store.utills;
-
-import org.springframework.stereotype.Component;
-
 import java.lang.reflect.Field;
 
 public class ReflexUtills {
