@@ -40,6 +40,7 @@ public class UserService {
         UserEntity  userEntity = UserEntity.builder()
                 .username(createUserRequest.getUsername())
                 .password(passwordEncoder.encode(createUserRequest.getPassword()))
+                .isActive(true)
                 .roles(roleEntities)
                 .build();
         userRepository.save(userEntity);

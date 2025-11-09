@@ -48,6 +48,10 @@ public class AuthenticationService {
     public LoginResponse hanlelogin(LoginRequest loginRequest) {
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword());
         authenticationManager.authenticate(token);
+        var user = userRepository.findByUsername(loginRequest.getUsername()).get();
+        if (!user.getIsActive()){
+            throw  new AppException(ErrorCode.USER_IS_LOOKED);
+        }
         return LoginResponse.builder()
                 .tokenType("Bearer")
                 .accessToken(generateToken(loginRequest.getUsername(), true))
