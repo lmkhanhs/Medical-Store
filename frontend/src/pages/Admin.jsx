@@ -44,7 +44,10 @@ import { clearAuthTokens, apiLogout, isAdmin, getUserRole } from '../api/auth';
 import AdminDashboard from './Admin/AdminDashboard';
 import CategoriesManagement from './Admin/CategoriesManagement';
 import AdminProducts from './Admin/AdminProducts';
+<<<<<<< HEAD
 import AdminUser from './Admin/AdminUser';
+=======
+>>>>>>> b5ee9664cc5897193156b6741d46e015c812dcb0
 import ProtectedRoute from '../components/ProtectedRoute';
 
 const drawerWidth = 280;
@@ -437,7 +440,10 @@ const Admin = () => {
           >
             <Routes>
               <Route path="dashboard" element={<AdminDashboard />} />
+<<<<<<< HEAD
               <Route path="users" element={<AdminUser />} />
+=======
+>>>>>>> b5ee9664cc5897193156b6741d46e015c812dcb0
               <Route path="categories" element={<CategoriesManagement />} />
               <Route path="products" element={<AdminProducts />} />
               <Route path="" element={<AdminDashboard />} />

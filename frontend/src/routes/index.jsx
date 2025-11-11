@@ -41,6 +41,7 @@ export default function Router() {
         { element: <ConsultPage />, path: "consult" },
         { element: <ProductDetail />, path: "product/:id" },
         { element: <SearchResults />, path: "search" },
+<<<<<<< HEAD
         {
           element: (
             <ProtectedRoute requiredRole="USER">
@@ -49,6 +50,8 @@ export default function Router() {
           ),
           path: "cart",
         },
+=======
+>>>>>>> b5ee9664cc5897193156b6741d46e015c812dcb0
         
         
         {
@@ -124,7 +127,10 @@ const CategoryPage = Loadable(lazy(() => import("../pages/CategoryPage")));
 const ConsultPage = Loadable(lazy(() => import("../pages/ConsultPage")));
 const ProductDetail = Loadable(lazy(() => import("../pages/ProductDetail")));
 const SearchResults = Loadable(lazy(() => import("../components/SearchResults")));
+<<<<<<< HEAD
 const CartPage = Loadable(lazy(() => import("../pages/CartPage")));
+=======
+>>>>>>> b5ee9664cc5897193156b6741d46e015c812dcb0
 
 
 const MainLayout = Loadable(lazy(() => import("../layout/Main")));
@@ -138,7 +144,11 @@ const VaccinationSchedulePage = Loadable(lazy(() => import("../pages/Vaccination
 
 
 const AdminDashboard = Loadable(lazy(() => import("../pages/Admin/AdminDashboard")));
+<<<<<<< HEAD
 const AdminUsersPage = Loadable(lazy(() => import("../pages/Admin/AdminUser")));
+=======
+const AdminUsersPage = Loadable(lazy(() => import("../pages/Admin/AdminUsers")));
+>>>>>>> b5ee9664cc5897193156b6741d46e015c812dcb0
 const AdminOrdersPage = Loadable(lazy(() => import("../pages/Admin/AdminOrders")));
 const AdminProductsPage = Loadable(lazy(() => import("../pages/Admin/AdminProducts")));
 const AdminCategoriesPage = Loadable(lazy(() => import("../pages/Admin/AdminCategories")));

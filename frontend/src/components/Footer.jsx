@@ -104,11 +104,19 @@ const Footer = () => {
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, color: 'grey.300' }}>
                   <PhoneIcon sx={{ color: 'primary.light' }} />
+<<<<<<< HEAD
                   <Typography variant="body2">Tư vấn: 0123456789</Typography>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, color: 'grey.300' }}>
                   <EmailIcon sx={{ color: 'primary.light' }} />
                   <Typography variant="body2">khanhphuminh@gmail.com</Typography>
+=======
+                  <Typography variant="body2">Tư vấn: 0334467772</Typography>
+                </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, color: 'grey.300' }}>
+                  <EmailIcon sx={{ color: 'primary.light' }} />
+                  <Typography variant="body2">tranphuocphukanija@gmail.com</Typography>
+>>>>>>> b5ee9664cc5897193156b6741d46e015c812dcb0
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, color: 'grey.300' }}>
                   <LocationIcon sx={{ color: 'primary.light' }} />

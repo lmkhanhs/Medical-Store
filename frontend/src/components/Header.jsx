@@ -19,11 +19,15 @@ import {
   useMediaQuery,
   Menu,
   MenuItem,
+<<<<<<< HEAD
   Avatar,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions
+=======
+  Avatar
+>>>>>>> b5ee9664cc5897193156b6741d46e015c812dcb0
 } from '@mui/material';
 import { 
   Search as SearchIcon,
@@ -97,7 +101,10 @@ const Header = ({ onSearch }) => {
   const [userInfo, setUserInfo] = useState(null);
   const [userRole, setUserRole] = useState('USER');
   const [anchorEl, setAnchorEl] = useState(null);
+<<<<<<< HEAD
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
+=======
+>>>>>>> b5ee9664cc5897193156b6741d46e015c812dcb0
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
   const navigate = useNavigate();
@@ -127,7 +134,11 @@ const Header = ({ onSearch }) => {
         const userInfo = JSON.parse(localStorage.getItem('user') || '{}');
         setUserInfo({
           name: userInfo.name || userInfo.username || 'User',
+<<<<<<< HEAD
           email: userInfo.email || 'khanhphuminh@gmail.com'
+=======
+          email: userInfo.email || 'user@example.com'
+>>>>>>> b5ee9664cc5897193156b6741d46e015c812dcb0
         });
       } else {
         setIsLoggedIn(false);
@@ -261,7 +272,11 @@ const Header = ({ onSearch }) => {
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <PhoneIcon fontSize="small" />
+<<<<<<< HEAD
                 <Typography variant="body2">Tư vấn: 0123456789</Typography>
+=======
+                <Typography variant="body2">Tư vấn: 0334467772</Typography>
+>>>>>>> b5ee9664cc5897193156b6741d46e015c812dcb0
               </Box>
               <Typography variant="body2">Giờ làm việc: 8:00 - 22:00</Typography>
             </Box>
@@ -437,6 +452,7 @@ const Header = ({ onSearch }) => {
               )}
               
               <motion.div whileHover={{ scale: 1.1 }}>
+<<<<<<< HEAD
                 <Box
                   sx={{
                     display: 'flex',
@@ -462,6 +478,16 @@ const Header = ({ onSearch }) => {
                     Giỏ hàng
                   </Typography>
                 </Box>
+=======
+                <IconButton sx={{ color: 'text.primary', '&:hover': { color: 'primary.main' } }}>
+                  <Badge badgeContent={0} color="error">
+                    <ShoppingCartIcon />
+                  </Badge>
+                </IconButton>
+                <Typography variant="body2" sx={{ display: { xs: 'none', md: 'block' } }}>
+                  Giỏ hàng
+                </Typography>
+>>>>>>> b5ee9664cc5897193156b6741d46e015c812dcb0
               </motion.div>
 
               <IconButton
@@ -606,6 +632,7 @@ const Header = ({ onSearch }) => {
         onClose={() => setIsImageUploadOpen(false)}
         onImageProcessed={handleImageProcessed}
       />
+<<<<<<< HEAD
 
       {/* Auth Dialog for Cart */}
       <Dialog
@@ -633,6 +660,8 @@ const Header = ({ onSearch }) => {
           </Button>
         </DialogActions>
       </Dialog>
+=======
+>>>>>>> b5ee9664cc5897193156b6741d46e015c812dcb0
     </>
   );
 };

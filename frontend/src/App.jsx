@@ -13,7 +13,10 @@ import AdminDashboard from './pages/Admin/AdminDashboard';
 import SearchResults from './components/SearchResults';
 import ProtectedRoute from './components/ProtectedRoute';
 import ProductsOverview from './pages/ProductsOverview';
+<<<<<<< HEAD
 import CartPage from './pages/CartPage';
+=======
+>>>>>>> b5ee9664cc5897193156b6741d46e015c812dcb0
 import './App.css';
 
 function App() {
@@ -51,6 +54,7 @@ function App() {
                   <Route path="/register" element={<Register />} />
                   <Route path="/products" element={<ProductsOverview />} />
                   <Route path="/search" element={<SearchResults />} />
+<<<<<<< HEAD
                   <Route
                     path="/cart"
                     element={
@@ -59,6 +63,8 @@ function App() {
                       </ProtectedRoute>
                     }
                   />
+=======
+>>>>>>> b5ee9664cc5897193156b6741d46e015c812dcb0
                 </Routes>
               </main>
               <Footer />
