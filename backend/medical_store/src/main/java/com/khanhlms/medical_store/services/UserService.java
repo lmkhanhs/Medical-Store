@@ -30,6 +30,19 @@ public class UserService {
     PasswordEncoder passwordEncoder;
     UserMapper userMapper;
     public boolean handlCreateUser(CreateUserRequest createUserRequest) {
+
+        if (createUserRequest.getPassword() == null || createUserRequest.getPassword().isEmpty()
+                || createUserRequest.getUsername() == null || createUserRequest.getUsername().isEmpty()
+                || createUserRequest.getRepeat() == null || createUserRequest.getRepeat().isEmpty()
+        ) {
+            throw new AppException(ErrorCode.INVALID_REQUEST);
+        }
+        if (createUserRequest.getPassword().equals(createUserRequest.getRepeat()) == false) {
+            throw new AppException(ErrorCode.PASSWORD_MISMATCH);
+        }
+        if (createUserRequest.getPassword().length() < 8) {
+            throw new AppException(ErrorCode.PASSWORD_TOO_SHORT);
+        }
         if (userRepository.findByUsername(createUserRequest.getUsername()).isPresent()) {
             throw new AppException(ErrorCode.USER_EXISTED);
         }

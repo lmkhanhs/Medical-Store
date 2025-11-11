@@ -8,6 +8,8 @@ import com.khanhlms.medical_store.exceptions.ErrorCode;
 import com.khanhlms.medical_store.model.TestLoginModel;
 import com.khanhlms.medical_store.services.AuthenticationService;
 import com.khanhlms.medical_store.utills.ExcelUtils;
+import com.khanhlms.medical_store.utills.TestResultExcelExporter;
+
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
@@ -18,10 +20,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.FileOutputStream;
 import java.util.*;
 
 import static org.mockito.Mockito.*;
@@ -95,54 +94,26 @@ class AuthenticationControllerTest {
                         .andExpect(jsonPath("$.message")
                                 .value(org.hamcrest.Matchers.equalToIgnoringCase(testCase.getExpectedMessage().trim())));
 
-                addResult(testCase, "PASSED", testCase.getExpectedMessage());
-
+                addResult(testCase.getTestCaseID(), testCase.getTestCaseDescription(), "PASSED", testCase.getExpectedMessage());
 
             } catch (AssertionError e) {
-                addResult(testCase, "FAILED", e.getMessage());
-
+                addResult(testCase.getTestCaseID(), testCase.getTestCaseDescription(), "FAILED", e.getMessage());
             }
         }
     }
 
-
-    private void addResult(TestLoginModel testCase, String status, String msg) {
+    private void addResult(String testcaseID, String description, String status, String msg) {
         Map<String, String> record = new HashMap<>();
-        record.put("Test Name", testCase.getTestCaseID());
-        record.put("Description", testCase.getTestCaseDescription());
+        record.put("Test Name", testcaseID);
+        record.put("Description", description);
         record.put("Status", status);
         record.put("Message", msg);
         results.add(record);
     }
 
-
     @AfterAll
-    void exportResults() throws Exception {
-        Workbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("Results");
-        Row header = sheet.createRow(0);
-
-        header.createCell(0).setCellValue("Test Name");
-        header.createCell(1).setCellValue("Description");
-        header.createCell(2).setCellValue("Status");
-        header.createCell(3).setCellValue("Message");
-
-
-        int rowIdx = 1;
-        for (Map<String, String> r : results) {
-            Row row = sheet.createRow(rowIdx++);
-            row.createCell(0).setCellValue(r.get("Test Name"));
-            row.createCell(1).setCellValue(r.get("Description"));
-            row.createCell(2).setCellValue(r.get("Status"));
-            row.createCell(3).setCellValue(r.get("Message"));
-        }
-
-
-        try (FileOutputStream fileOut = new FileOutputStream("test-result.xlsx")) {
-            workbook.write(fileOut);
-        }
-        workbook.close();
-        log.info("✅ Exported test-result.xlsx successfully.");
+    void exportResults() {
+        List<String> headers = List.of("Test Name", "Description", "Status", "Message");
+        TestResultExcelExporter.exportToExcel("test-result.xlsx", results, headers);
     }
-
 }

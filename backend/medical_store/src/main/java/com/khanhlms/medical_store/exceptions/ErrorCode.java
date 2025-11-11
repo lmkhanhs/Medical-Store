@@ -5,9 +5,10 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public enum ErrorCode {
-
     USER_EXISTED(1000, "user existed", HttpStatus.INTERNAL_SERVER_ERROR),
     USER_IS_LOOKED(1001, "Account locked", HttpStatus.FORBIDDEN),
+    PASSWORD_MISMATCH(1003, "password mismatch", HttpStatus.BAD_REQUEST),
+    PASSWORD_TOO_SHORT(1004, "Password must be at least 8 characters", HttpStatus.BAD_REQUEST),
     AUTHENTICATION_EXCEPTION(1002, "authentication exception", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED_EXCEPTION(1003, "unauthorized exception {User don't have permission!}", HttpStatus.FORBIDDEN),
     JWT_EXCEPTION(1004, "jwt exception", HttpStatus.UNAUTHORIZED),
