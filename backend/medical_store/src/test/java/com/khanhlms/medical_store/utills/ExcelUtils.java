@@ -1,5 +1,6 @@
 package com.khanhlms.medical_store.utills;
 
+import com.khanhlms.medical_store.model.CategotiesModel;
 import com.khanhlms.medical_store.model.RegisterModel;
 import com.khanhlms.medical_store.model.TestLoginModel;
 import com.khanhlms.medical_store.model.TestManufacturerModel;
@@ -110,5 +111,36 @@ public class ExcelUtils {
         }
         return testCases;
     }
+    public static List<CategotiesModel> readCategoryTestData(String excelFilePath) {
+        List<CategotiesModel> testCases = new ArrayList<>();
+
+        try (InputStream inputStream = ExcelUtils.class.getResourceAsStream(excelFilePath);
+             Workbook workbook = new XSSFWorkbook(inputStream)) {
+
+            Sheet sheet = workbook.getSheetAt(3); // ✅ SHEET CATEGORY = sheet thứ 3
+
+            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+                Row row = sheet.getRow(i);
+                if (row == null) continue;
+
+                CategotiesModel tc = new CategotiesModel();
+
+                tc.setTestCaseID(getStringCell(row.getCell(0)));            // A
+                tc.setTestCaseDescription(getStringCell(row.getCell(1)));   // B
+                tc.setToken(getStringCell(row.getCell(2)));                 // C
+                tc.setName(getStringCell(row.getCell(3)));                  // D
+                tc.setExpectedStatus(getIntCell(row.getCell(4)));           // E
+                tc.setExpectedMessage(getStringCell(row.getCell(5)).trim()); // F
+
+                testCases.add(tc);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return testCases;
+    }
+
 
 }

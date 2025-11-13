@@ -20,6 +20,7 @@ public enum ErrorCode {
     USER_NOT_EXISTED(1008, "user not existed", HttpStatus.BAD_REQUEST),
     PRODUCT_NOT_FOUND(1009, "product not found", HttpStatus.BAD_REQUEST),
     QUESTION_NOT_FOUND(1010, "question not found", HttpStatus.BAD_REQUEST),
+    CATEGORY_EXITSTED(1011, "category exitsted", HttpStatus.INTERNAL_SERVER_ERROR),
     INVALID_REQUEST(1011, "invalid request", HttpStatus.BAD_REQUEST);
 
     private final int code;
