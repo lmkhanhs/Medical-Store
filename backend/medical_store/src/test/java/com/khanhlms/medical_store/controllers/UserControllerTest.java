@@ -122,8 +122,16 @@ class UserControllerTest {
     }
 
     @AfterAll
-    void exportResults() {
+    void export() {
         List<String> headers = List.of("Test Name", "Description", "Status", "Message");
-        TestResultExcelExporter.exportToExcel("test-result.xlsx", results, headers);
+
+        TestResultExcelExporter.appendResults(
+                "test-result.xlsx",
+                "Users",     // hoặc "Categories", "Manufacturer", "Users"
+                results,
+                headers
+        );
     }
+
+
 }

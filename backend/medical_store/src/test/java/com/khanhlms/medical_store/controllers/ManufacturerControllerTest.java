@@ -103,9 +103,17 @@ class ManufacturerControllerTest {
     }
 
     @AfterAll
-    void exportResults() {
+    void export() {
         List<String> headers = List.of("Test Name", "Description", "Status", "Message");
-        TestResultExcelExporter.exportToExcel("test-result.xlsx", results, headers); // ✅ GHI THÊM VÀO FILE TỔNG
+
+        TestResultExcelExporter.appendResults(
+                "test-result.xlsx",
+                "Manufacturer",     // hoặc "Categories", "Manufacturer", "Users"
+                results,
+                headers
+        );
     }
+
+
 
 }

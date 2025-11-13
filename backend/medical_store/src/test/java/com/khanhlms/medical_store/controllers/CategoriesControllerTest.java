@@ -115,10 +115,16 @@ class CategoriesControllerTest {
     }
 
     @AfterAll
-    void exportResults() {
+    void export() {
         List<String> headers = List.of("Test Name", "Description", "Status", "Message");
 
-        // 📌 Ghi vào file test-result.xlsx
-        TestResultExcelExporter.exportToExcel("test-result.xlsx", results, headers);
+        TestResultExcelExporter.appendResults(
+                "test-result.xlsx",
+                "Categories",     // hoặc "Categories", "Manufacturer", "Users"
+                results,
+                headers
+        );
     }
+
+
 }
