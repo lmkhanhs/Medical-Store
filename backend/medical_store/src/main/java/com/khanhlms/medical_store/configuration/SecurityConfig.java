@@ -64,6 +64,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/uploads/**").permitAll()
+                        .requestMatchers(PREFIX_API+"/ai/**").permitAll()
                         .requestMatchers(HttpMethod.GET,buildWithPrefix(PUBLIC_END_POINT_GET, PREFIX_API)).permitAll()
                         .requestMatchers(HttpMethod.POST, PUBLIC_END_POINT_TEST).permitAll()
                         .requestMatchers(HttpMethod.POST,"/api/v1/auth/**").permitAll()

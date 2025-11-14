@@ -4,6 +4,7 @@ server:
 app:
     api:
         prefix: /api/v1
+        prefixAI: http://127.0.0.1:8000
     security:
       expiresIn: 6000 # 300 second = 5 minutes
       expiresRefresh: 30000 # 3000 second = 50p
