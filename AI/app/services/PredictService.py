@@ -1,11 +1,16 @@
 import numpy as np
+import os
+import tensorflow as tf
 from tensorflow.keras.preprocessing import image
 from tensorflow import keras
 
-# Load model h5
-model = keras.models.load_model("MedicalClassification.h5")
+# Đường dẫn model
+MODEL_PATH = os.path.join("model", "MedicalClassification.h5")
 
-# Danh sách class
+# Load model 1 lần duy nhất
+model = keras.models.load_model(MODEL_PATH)
+
+# Tên tiếng Anh
 class_name = [
     'blood pressure monitor', 'cotton balls', 'infrared thermometer',
     'medical gloves', 'medical mask', 'medical tape', 'medical tweezers',
@@ -13,7 +18,7 @@ class_name = [
     'pulse oximeter', 'reflex hammer', 'stethoscope', 'surgical scissors'
 ]
 
-# Mapping tiếng Việt
+# Tên tiếng Việt
 vietnamess_name = {
     "blood pressure monitor": "Máy đo huyết áp",
     "cotton balls": "Bông gòn",
@@ -26,25 +31,28 @@ vietnamess_name = {
     "mercury thermometer": "Nhiệt kế thủy ngân",
     "nebulizer mask": "Mặt nạ phun sương",
     "pulse oximeter": "Máy đo oxy trong máu",
-    "reflex hammer": "Búa cao su (búa phản xạ)",
+    "reflex hammer": "Búa phản xạ",
     "stethoscope": "Ống nghe y tế",
     "surgical scissors": "Kéo phẫu thuật"
 }
 
-def predict_image_pil(pil_img):
-    """
-    Hàm nhận vào 1 ảnh kiểu PIL.Image và trả kết quả dự đoán
-    """
-    # Resize và chuẩn hóa
-    img = pil_img.resize((128, 128))
+def predict_from_image(img_path: str):
+    """Dự đoán ảnh và trả kết quả"""
+
+    img = image.load_img(img_path, target_size=(128, 128))
     img_array = image.img_to_array(img) / 255.0
     img_array = np.expand_dims(img_array, axis=0)
 
-    # Dự đoán
     pred = model.predict(img_array)
-    class_idx = np.argmax(pred, axis=1)[0]
+    class_idx = int(np.argmax(pred, axis=1)[0])
 
-    eng_name = class_name[class_idx]
-    vi_name = vietnamess_name[eng_name]
+    english_name = class_name[class_idx]
+    vietnamese_name = vietnamess_name[english_name]
+    confidence = float(pred[0][class_idx] * 100)
 
-    return eng_name, vi_name, float(np.max(pred))
+    return {
+        "class_index": class_idx,
+        "name_en": english_name,
+        "name_vi": vietnamese_name,
+        "confidence": confidence
+    }

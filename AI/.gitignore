@@ -1,3 +1,2 @@
-/venv/
-*.h5
-__pycache__
+model/*.h5
+app/__pycache__
