@@ -33,7 +33,8 @@ public class UserEntity extends BaseEntity implements UserDetails {
     String avatarUrl;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     List<CartItemEntity> cartItems;
-
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<OrderEntity> orders;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     List<AnswersEntity> answers;
 

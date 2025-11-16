@@ -102,7 +102,14 @@ public class ProductsSercvice {
     public DetailProduct handGetDetailProduct(String productId) {
         ProductsEntity product = this.productRepository.findById(productId)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
-        return productsMapper.toDetailProduct(product);
+        var result = productsMapper.toDetailProduct(product);
+        double percentage = 0;
+        if (product.getDiscount() != null) {
+            percentage = product.getDiscount().getPercent();
+        }
+        result.setDiscountPercen(percentage);
+        result.setDiscountPrice(result.getOriginPrice() * (100 - percentage ) / 100);
+        return result;
     }
     public List<ProductResponse> getByKeyword(String keyword, Pageable pageable) {
         if (keyword.equals("")) return Collections.emptyList();
