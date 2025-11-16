@@ -28,9 +28,15 @@ public class UserEntity extends BaseEntity implements UserDetails {
     String password;
     String email;
     String fullName;
+    String phoneNumber;
+    String address;
+    String city;
+    String ward;
+
     LocalDateTime lastLogin;
     Boolean isActive;
     String avatarUrl;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     List<CartItemEntity> cartItems;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
