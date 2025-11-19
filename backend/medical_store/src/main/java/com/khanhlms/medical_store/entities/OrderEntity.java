@@ -26,10 +26,13 @@ public class OrderEntity extends BaseEntity {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     List<OrderItemEntity> orderItems;
     Double totalAmount;
-    String note;
-    String shippingAddress;
     String status;
-
+    String address;
+    String city;
+    String ward;
+    @Column(columnDefinition = "TEXT")
+    String note;
+    String phoneNumber;
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
     PaymentEntity payment;
 }

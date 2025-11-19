@@ -19,10 +19,11 @@ public class PaymentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    String payMethod;
+    String paymentMethod;
     String status;
     String transactionId;
-    String content;
+    @Column(columnDefinition = "TEXT")
+    String paymentNote;
     String code ;
     LocalDateTime createdDate;
     @OneToOne
