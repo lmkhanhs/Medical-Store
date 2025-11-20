@@ -14,11 +14,10 @@ app:
     file:
       prefix: /uploads
 vnpay:
-  tmn-code: 0D7U0C4Z
-  hash-secret: 8ZF37DFFNM6F4M756V6PA2MW4UO75DM4
-  pay-url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
-  return-url: http://localhost:8080/api/v1/payment/vnpay/return
-
+  tmnCode: RMEWAEMU
+  hashSecret: GSNJ39IBETFV4UBG50R9QZP9GQEDSYMQ
+  payUrl: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+  returnUrl: https://treponemal-kiara-unpurely.ngrok-free.dev/api/v1/payment/vnpay/return
 spring:
     application:
         name: medical_store

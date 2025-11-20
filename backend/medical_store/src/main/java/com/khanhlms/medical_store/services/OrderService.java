@@ -1,5 +1,6 @@
 package com.khanhlms.medical_store.services;
 
+import com.khanhlms.medical_store.configuration.VnPayConfig;
 import com.khanhlms.medical_store.dtos.orders.request.CreateOrderRequest;
 import com.khanhlms.medical_store.dtos.orders.request.ItemOrder;
 import com.khanhlms.medical_store.dtos.orders.response.CreateOrderResponse;
@@ -12,6 +13,7 @@ import com.khanhlms.medical_store.exceptions.ErrorCode;
 import com.khanhlms.medical_store.repositories.OrderRepository;
 import com.khanhlms.medical_store.repositories.ProductRepository;
 import com.khanhlms.medical_store.repositories.UserRepository;
+import com.khanhlms.medical_store.utills.RequestHttpUitlls;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +30,9 @@ public class OrderService {
     final OrderRepository orderRepository;
     final UserRepository userRepository;
     final ProductRepository productRepository;
+    final VnPayService vnPayService;
 
-    public CreateOrderResponse createOrder(String username, CreateOrderRequest request) {
+    public CreateOrderResponse createOrder(HttpServletRequest httpServletRequest, String username, CreateOrderRequest request) {
         List<ItemOrder> itemOrders = request.getItemOrders();
         List<OrderItemEntity> orderItems = new LinkedList<>();
         Double totalAmount = 0.0 ;
@@ -60,7 +63,7 @@ public class OrderService {
         }
         PaymentEntity paymentEntity = PaymentEntity.builder()
                 .paymentNote(request.getPaymentNote())
-                .paymentMethod(request.getPaymentType())
+                .paymentMethod(PaymentMethod.valueOf(request.getPaymentType()).toString())
                 .status(PaymentStatus.PENDING.toString())
                 .build();
 
@@ -86,29 +89,24 @@ public class OrderService {
         // 🔥 Persist vào DB
         orderEntity = orderRepository.save(orderEntity);
 
+        // 🔥 Xử lý thanh toán VNPay nếu chọn online
+        String redirectUrl = null;
+        if (paymentEntity.getPaymentMethod().equals(PaymentMethod.VNPAY.toString())) {
+            redirectUrl = vnPayService.createPaymentUrl(
+                    orderEntity.getTotalAmount().longValue(),
+                    orderEntity.getId(),
+                    orderEntity.getPayment().getId(),
+                    RequestHttpUitlls.getClientIp(httpServletRequest)
+            );
+        }
         return CreateOrderResponse.builder()
                 .orderId(orderEntity.getId())
                 .paymentMethod(orderEntity.getPayment().getPaymentMethod())
                 .totalAmount(orderEntity.getTotalAmount())
                 .status(orderEntity.getStatus())
-                .redirectUrl(null)
+                .redirectUrl(redirectUrl)
                 .build();
 
     }
-    public String handleWithVnpay(){
-        return null;
-    }
-    private String getClientIp(HttpServletRequest request) {
-        String ip = request.getHeader("X-Forwarded-For");
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("Proxy-Client-IP");
-        }
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("WL-Proxy-Client-IP");
-        }
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getRemoteAddr();
-        }
-        return ip;
-    }
+
 }

@@ -17,8 +17,8 @@ import java.time.LocalDateTime;
 @Table(name = "payments")
 public class PaymentEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    String id;
     String paymentMethod;
     String status;
     String transactionId;

@@ -5,6 +5,7 @@ import com.khanhlms.medical_store.dtos.orders.response.CreateOrderResponse;
 import com.khanhlms.medical_store.dtos.response.ApiResponse;
 import com.khanhlms.medical_store.services.OrderService;
 import com.khanhlms.medical_store.utills.AuthenticationUtills;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -23,13 +24,14 @@ public class OrderController {
     AuthenticationUtills  authenticationUtills;
     OrderService orderService;
     @PostMapping("/")
-    public ApiResponse<CreateOrderResponse> createOrder(@RequestBody CreateOrderRequest order) {
+    public ApiResponse<CreateOrderResponse> createOrder(@RequestBody CreateOrderRequest order,
+                                                        HttpServletRequest request) {
         String username = authenticationUtills.getUserName();
 
         return ApiResponse.<CreateOrderResponse>builder()
                 .code(201)
                 .message("Create order successfully")
-                .data(this.orderService.createOrder(username, order))
+                .data(this.orderService.createOrder(request, username, order))
                 .build();
     }
 }
