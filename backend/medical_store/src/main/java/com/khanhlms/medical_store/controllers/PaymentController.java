@@ -1,7 +1,11 @@
 package com.khanhlms.medical_store.controllers;
 
 import com.khanhlms.medical_store.configuration.VnPayConfig;
+import com.khanhlms.medical_store.entities.OrderEntity;
 import com.khanhlms.medical_store.entities.PaymentEntity;
+import com.khanhlms.medical_store.enums.OrderStatus;
+import com.khanhlms.medical_store.enums.PaymentMethod;
+import com.khanhlms.medical_store.enums.PaymentStatus;
 import com.khanhlms.medical_store.exceptions.AppException;
 import com.khanhlms.medical_store.exceptions.ErrorCode;
 import com.khanhlms.medical_store.repositories.PaymentRepository;
@@ -29,7 +33,7 @@ import java.util.*;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class PaymentController {
     VnPayConfig  vnPayConfig;
-    private final PaymentRepository paymentRepository;
+    PaymentRepository paymentRepository;
 
     @GetMapping("/vnpay/return")
     public String VnpayReturn(HttpServletRequest request, Model model) throws UnsupportedEncodingException {
@@ -78,31 +82,22 @@ public class PaymentController {
         String vnp_Amount = fields.get("vnp_Amount");
         String vnp_PayDate = fields.get("vnp_PayDate");
         String vnp_TransactionNo = fields.get("vnp_TransactionNo");
-        // check transactionNo
-        // var status =
-        // this.paymentRepository.findByTransactionId(vnp_TransactionNo).isPresent();
-        // if(status){
-        // model.addAttribute("error", "Thanh toán thất bại");
-        // return "payment-failed";
-        // }
+
         String paymentCode = vnp_TxnRef; // Txn_ref is paymentID
         PaymentEntity paymentEntity = paymentRepository.findById(paymentCode)
                 .orElseThrow(() -> new AppException(ErrorCode.PAYMENT_NOT_EXIST));
-
+        OrderEntity orderEntity = paymentEntity.getOrder();
         if ("00".equals(vnp_ResponseCode)) {
             model.addAttribute("transactionId", vnp_TransactionNo);
             model.addAttribute("amount", formatAmount(vnp_Amount));
             model.addAttribute("paymentTime", formatPayDate(vnp_PayDate));
-            // TODO
+
+            paymentEntity.setStatus(PaymentStatus.SUCCESS.toString());
+            orderEntity.setStatus(OrderStatus.CONFIRMED.toString());
             return "vnpay-success";
         } else {
-//            paymentEntity.setStatus(PaymentStatus.FAILED.toString());
-//            this.paymentRepository.save(paymentEntity);
-//            //
-//            BookingEntity booking = paymentEntity.getBooking();
-//            booking.setBookingStatus(BookingStatus.FAILED.toString());
-//            this.bookingRepository.save(booking);
-//            model.addAttribute("error", "Thanh toán thất bại. Mã lỗi: " + vnp_ResponseCode);
+            orderEntity.setStatus(OrderStatus.CANCELLED.toString());
+            paymentEntity.setStatus(PaymentStatus.FAILED.toString());
             return "payment-failed";
         }
     }
