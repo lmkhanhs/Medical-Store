@@ -23,9 +23,5 @@ public class ManufacturerResponse {
     String email;
     Date foundingDate;
     String thumbnailUrl;
-<<<<<<< HEAD
-
-=======
     Integer position;
->>>>>>> main
 }
