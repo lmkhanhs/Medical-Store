@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
@@ -30,5 +32,11 @@ public class ManufacturerService {
         manufacturerEntity.setActive(true);
         manufacturerEntity.setDeleted(false);
         return this.manufacturerMapper.toResponse(manufacturerRepository.save(manufacturerEntity));
+    }
+    public List<ManufacturerResponse> getAllManufacturers(){
+        List<ManufacturerEntity> manufacturerEntities = manufacturerRepository.findAll();
+        return manufacturerEntities.stream()
+                .map(item -> manufacturerMapper.toResponse(item))
+                .toList();
     }
 }
