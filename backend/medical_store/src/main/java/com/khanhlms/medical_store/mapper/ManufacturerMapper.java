@@ -1,6 +1,9 @@
 package com.khanhlms.medical_store.mapper;
 
 import com.khanhlms.medical_store.dtos.manufacturer.requests.CreateManufaturerRequest;
+
+import com.khanhlms.medical_store.dtos.manufacturer.requests.UpdateManufacturerRequest;
+
 import com.khanhlms.medical_store.dtos.manufacturer.response.ManufacturerResponse;
 import com.khanhlms.medical_store.entities.ManufacturerEntity;
 import com.khanhlms.medical_store.utills.CloudinaryUtils;
@@ -30,4 +33,12 @@ public abstract class ManufacturerMapper {
         }
         return this.cloudinaryUtils.uploadImageCloddy(multipartFile);
     }
+
+    ///  ////
+     @Mappings({
+             @Mapping(source = "image", target = "thumbnailUrl", qualifiedByName = "mapImage"),
+             @Mapping(source = "position", target = "position")
+         })
+    public abstract ManufacturerEntity toEntity(UpdateManufacturerRequest updateManufacturerRequest);
+
 }
