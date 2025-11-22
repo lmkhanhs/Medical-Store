@@ -1,4 +1,4 @@
-package com.khanhlms.medical_store.dtos.manufacturer.response;
+package com.khanhlms.medical_store.dtos.manufacturer.requests;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -12,8 +12,7 @@ import java.util.Date;
 @Getter
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ManufacturerResponse {
-    String id;
+public class UpdateManufacturerRequest {
     String name;
     String description;
     String country;
@@ -22,6 +21,6 @@ public class ManufacturerResponse {
     String phone;
     String email;
     Date foundingDate;
-    String thumbnailUrl;
+    MultipartFile image;
     Integer position;
 }

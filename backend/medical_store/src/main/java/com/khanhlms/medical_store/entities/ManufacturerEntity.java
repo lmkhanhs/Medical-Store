@@ -22,7 +22,7 @@ public class ManufacturerEntity extends BaseEntity {
 
     @Column(nullable = false, unique = true)
     String name;
-
+    Integer position;
     String country;
     String address;
     String city;

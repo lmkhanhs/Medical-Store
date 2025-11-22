@@ -13,6 +13,7 @@ public enum ErrorCode {
     UNAUTHORIZED_EXCEPTION(1003, "unauthorized exception {User don't have permission!}", HttpStatus.FORBIDDEN),
     JWT_EXCEPTION(1004, "jwt exception", HttpStatus.UNAUTHORIZED),
     MANUFACTURER_IS_EXISTED(1005, "manufacturer is existed", HttpStatus.BAD_REQUEST),
+
     MANUFACTURER_INVALID(1005, "manufacturer is invalid", HttpStatus.BAD_REQUEST),
     MANUFACTURER_NOT_FOUND(1005, "manufacturer not found exception", HttpStatus.BAD_REQUEST),
     CATEGORY_NOT_FOUND(1006, "category not found exception", HttpStatus.BAD_REQUEST),

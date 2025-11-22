@@ -1,6 +1,7 @@
 package com.khanhlms.medical_store.controllers;
 
 import com.khanhlms.medical_store.dtos.manufacturer.requests.CreateManufaturerRequest;
+import com.khanhlms.medical_store.dtos.manufacturer.requests.UpdateManufacturerRequest;
 import com.khanhlms.medical_store.dtos.manufacturer.response.ManufacturerResponse;
 import com.khanhlms.medical_store.dtos.response.ApiResponse;
 import com.khanhlms.medical_store.services.ManufacturerService;
@@ -40,6 +41,19 @@ public class ManufacturerController {
                 .code(200)
                 .message("Manufacturer list successfully")
                 .data(manufacturerService.getAllManufacturers())
+                .build();
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PatchMapping(value = "/manufacturers/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponse<ManufacturerResponse> handleUpdateManufacturer(
+            @ModelAttribute UpdateManufacturerRequest request,
+            @PathVariable String id
+    ) {
+        return ApiResponse.<ManufacturerResponse>builder()
+                .code(200)
+                .message("Update manufacture successfully!")
+                .data(manufacturerService.handUpdateManufacturer(id, request))
                 .build();
     }
 }
