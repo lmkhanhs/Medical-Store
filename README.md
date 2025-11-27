@@ -1,2 +1,2 @@
-# Medical-Store
+# MedStore
 Store sell medical equipment, machine  capsule
