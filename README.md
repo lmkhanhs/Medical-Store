@@ -1,2 +1,2 @@
 # MedStore
-Store sell medical equipment, machine  capsule
+Trang web chuyên cung cấp thuốc và vật tư y tế
