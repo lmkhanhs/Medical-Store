@@ -61,7 +61,7 @@ public class UserController {
                 .data(this.userService.handgetMyInfo(username))
                 .build();
     }
-    @PatchMapping(value = "/info",  consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/info",  consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<ProfileResponse> updateProfile(
             @ModelAttribute ChangeProfileRequest changeProfileRequest
             ){
