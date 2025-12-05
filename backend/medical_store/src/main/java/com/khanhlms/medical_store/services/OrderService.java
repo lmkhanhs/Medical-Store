@@ -40,9 +40,7 @@ public class OrderService {
         List<OrderItemEntity> orderItems = new LinkedList<>();
         Double totalAmount = 0.0 ;
         UserEntity user = userRepository.findByUsername(username).get();
-        String status = request.getPaymentType().equals(PaymentMethod.COD.toString()) == true
-                ? OrderStatus.PENDING.toString()
-                : OrderStatus.CONFIRMED.toString();
+        String status = OrderStatus.PENDING.toString();
         for (ItemOrder itemOrder : itemOrders) {
             ProductsEntity product = productRepository.findById(itemOrder.getProductId())
                     .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
