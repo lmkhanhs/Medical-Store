@@ -2,6 +2,7 @@ package com.khanhlms.medical_store.controllers;
 
 import com.khanhlms.medical_store.dtos.orders.request.CreateOrderRequest;
 import com.khanhlms.medical_store.dtos.orders.response.CreateOrderResponse;
+import com.khanhlms.medical_store.dtos.orders.response.OrderResponse;
 import com.khanhlms.medical_store.dtos.response.ApiResponse;
 import com.khanhlms.medical_store.services.OrderService;
 import com.khanhlms.medical_store.utills.AuthenticationUtills;
@@ -14,6 +15,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -34,4 +41,11 @@ public class OrderController {
                 .data(this.orderService.createOrder(request, username, order))
                 .build();
     }
+    @GetMapping("/")
+    public List<OrderResponse> getOrders() {
+        String username = authenticationUtills.getUserName();
+        
+        return null;
+    }
+    
 }

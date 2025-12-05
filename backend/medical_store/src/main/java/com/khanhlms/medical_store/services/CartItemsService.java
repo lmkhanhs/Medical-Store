@@ -59,7 +59,8 @@ public class CartItemsService {
                 .build();
     }
     public List<CartItemResponse> handMyCartItems(String username, Pageable  pageable) {
-        return  this.cartItemsRespository.findAllByDeletedFalse(pageable)
+        UserEntity user = this.userRepository.findByUsername(username).get();
+        return  this.cartItemsRespository.findAllByUserAndDeletedFalse(user, pageable)
                 .get()
                 .map(item -> this.cartsMapper.toCartItemResponse(item))
                 .toList();

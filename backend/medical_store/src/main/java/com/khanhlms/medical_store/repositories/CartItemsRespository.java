@@ -16,5 +16,5 @@ public interface CartItemsRespository extends JpaRepository<CartItemEntity, Stri
 
     Optional<CartItemEntity> findByProductAndUser(ProductsEntity product, UserEntity user);
 
-    Page<CartItemEntity> findAllByDeletedFalse(Pageable pageable);
+    Page<CartItemEntity> findAllByUserAndDeletedFalse(UserEntity userEntity ,Pageable pageable);
 }

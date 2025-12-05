@@ -4,12 +4,14 @@ import com.khanhlms.medical_store.configuration.VnPayConfig;
 import com.khanhlms.medical_store.dtos.orders.request.CreateOrderRequest;
 import com.khanhlms.medical_store.dtos.orders.request.ItemOrder;
 import com.khanhlms.medical_store.dtos.orders.response.CreateOrderResponse;
+import com.khanhlms.medical_store.dtos.orders.response.OrderResponse;
 import com.khanhlms.medical_store.entities.*;
 import com.khanhlms.medical_store.enums.OrderStatus;
 import com.khanhlms.medical_store.enums.PaymentMethod;
 import com.khanhlms.medical_store.enums.PaymentStatus;
 import com.khanhlms.medical_store.exceptions.AppException;
 import com.khanhlms.medical_store.exceptions.ErrorCode;
+import com.khanhlms.medical_store.mapper.OrderMapper;
 import com.khanhlms.medical_store.repositories.OrderRepository;
 import com.khanhlms.medical_store.repositories.ProductRepository;
 import com.khanhlms.medical_store.repositories.UserRepository;
@@ -31,7 +33,8 @@ public class OrderService {
     final UserRepository userRepository;
     final ProductRepository productRepository;
     final VnPayService vnPayService;
-
+    final OrderMapper orderMapper;
+    
     public CreateOrderResponse createOrder(HttpServletRequest httpServletRequest, String username, CreateOrderRequest request) {
         List<ItemOrder> itemOrders = request.getItemOrders();
         List<OrderItemEntity> orderItems = new LinkedList<>();
@@ -106,7 +109,15 @@ public class OrderService {
                 .status(orderEntity.getStatus())
                 .redirectUrl(redirectUrl)
                 .build();
-
-    }
+        }
+        
+        public List<OrderResponse> getOrderforUser(String username){
+            UserEntity user = this.userRepository.findByUsername(username).get();
+            
+            return this.orderRepository.findByUser(user)
+                .stream()
+                .map(order -> this.orderMapper.toOrderResponse(order))
+                .toList();
+        }
 
 }
