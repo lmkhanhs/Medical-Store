@@ -109,13 +109,16 @@ public class OrderService {
                 .build();
         }
         
-        public List<OrderResponse> getOrderforUser(String username){
-            UserEntity user = this.userRepository.findByUsername(username).get();
-            
-            return this.orderRepository.findByUser(user)
-                .stream()
-                .map(order -> this.orderMapper.toOrderResponse(order))
-                .toList();
-        }
+        public List<OrderResponse> getOrderforUser(String username) {
+
+                UserEntity user = this.userRepository.findByUsername(username)
+                        .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+                return orderRepository.findByUserId(user.getId())
+                        .stream()
+                        .map(orderMapper::toOrderResponse)
+                        .toList();
+                }
+
 
 }
