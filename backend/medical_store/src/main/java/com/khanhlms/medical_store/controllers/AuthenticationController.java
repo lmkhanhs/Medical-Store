@@ -45,7 +45,7 @@ public class AuthenticationController {
                 .data(this.authenticationService.handLogout(logoutRequest))
                 .build();
     }
-    @PatchMapping( value = "/password")
+    @PutMapping( value = "/password")
     public ApiResponse<Void> changePass(@RequestBody ChangePasswordRequest changePassword){
         String username = this.authenticationUtills.getUserName();
 

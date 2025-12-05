@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.service.annotation.PutExchange;
 
 import java.util.List;
 
@@ -45,7 +46,7 @@ public class ManufacturerController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @PatchMapping(value = "/manufacturers/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/manufacturers/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<ManufacturerResponse> handleUpdateManufacturer(
             @ModelAttribute UpdateManufacturerRequest request,
             @PathVariable String id
