@@ -42,10 +42,14 @@ public class OrderController {
                 .build();
     }
     @GetMapping("/")
-    public List<OrderResponse> getOrders() {
+    public ApiResponse<List<OrderResponse>> getOrders() {
         String username = authenticationUtills.getUserName();
-        
-        return null;
+
+        return ApiResponse.<List<OrderResponse>>builder()
+            .code(200)
+            .message("Get order by user successfully!")
+            .data(this.orderService.getOrderforUser(username))
+            .build();
     }
     
 }
