@@ -41,14 +41,14 @@ public class OrderController {
                 .data(this.orderService.createOrder(request, username, order))
                 .build();
     }
-    @GetMapping("/")
-    public ApiResponse<List<OrderResponse>> getOrders() {
+    @GetMapping("")
+    public ApiResponse<List<OrderResponse>> getOrders(@RequestParam(name = "status", defaultValue = "PENDING") String status) {
         String username = authenticationUtills.getUserName();
 
         return ApiResponse.<List<OrderResponse>>builder()
             .code(200)
-            .message("Get order by user successfully!")
-            .data(this.orderService.getOrderforUser(username))
+            .message("Get order by user has status: " + status + " successfully!")
+            .data(this.orderService.getOrderforUser(username, status))
             .build();
     }
     

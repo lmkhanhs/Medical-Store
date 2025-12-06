@@ -50,5 +50,13 @@ public class GlobalExceptionHandler {
                 .build();
         return ResponseEntity.status(errorCode.getHttpStatus().value()).body(apiResponse);
     }
+    @ExceptionHandler(IllegalArgumentException.class)
+    ResponseEntity<ApiResponse<String>> handleIllegalArgumentException(IllegalArgumentException ex){
+        ApiResponse<String> apiResponse = ApiResponse.<String>builder()
+                                            .code(HttpStatus.BAD_REQUEST.value())
+                                            .message("Status is not constant")
+                                            .build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+    }
 
 }

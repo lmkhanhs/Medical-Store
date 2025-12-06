@@ -109,13 +109,14 @@ public class OrderService {
                 .build();
         }
         
-        public List<OrderResponse> getOrderforUser(String username) {
+        public List<OrderResponse> getOrderforUser(String username, String status) {
 
                 UserEntity user = this.userRepository.findByUsername(username)
                         .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
                 return orderRepository.findByUserId(user.getId())
                         .stream()
+                        .filter(order -> order.getStatus().equals(OrderStatus.valueOf(status).toString()))
                         .map(orderMapper::toOrderResponse)
                         .toList();
                 }
