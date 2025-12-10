@@ -49,6 +49,9 @@ public class UserEntity extends BaseEntity implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     List<QuestionEntity> questions;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<ReviewEntity> reviews;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user-roles",

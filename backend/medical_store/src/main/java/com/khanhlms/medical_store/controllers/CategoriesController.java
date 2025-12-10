@@ -1,5 +1,6 @@
 package com.khanhlms.medical_store.controllers;
 
+import com.khanhlms.medical_store.dtos.categories.request.UpdateCategoryRequest;
 import com.khanhlms.medical_store.dtos.requests.categories.CreateCategoryRequest;
 import com.khanhlms.medical_store.dtos.response.ApiResponse;
 import com.khanhlms.medical_store.dtos.response.categories.CategoryResponse;
@@ -17,6 +18,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -46,6 +51,15 @@ public class CategoriesController {
                 .code(200)
                 .message("Successfully retrieved categories")
                 .data(this.categoriesService.handfindAll(pageable))
+                .build();
+    }
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PutMapping(value = "/categories", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponse<CategoryResponse> updateCategory(@ModelAttribute UpdateCategoryRequest request){
+        return ApiResponse.<CategoryResponse>builder()
+                .code(200)
+                .message("Update category successfully!")
+                .data(this.categoriesService.handleUpdateCategory(request))
                 .build();
     }
 }

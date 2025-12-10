@@ -1,5 +1,6 @@
 package com.khanhlms.medical_store.services;
 
+import com.khanhlms.medical_store.dtos.categories.request.UpdateCategoryRequest;
 import com.khanhlms.medical_store.dtos.requests.categories.CreateCategoryRequest;
 import com.khanhlms.medical_store.dtos.response.categories.CategoryResponse;
 import com.khanhlms.medical_store.entities.CategoryEntity;
@@ -7,6 +8,8 @@ import com.khanhlms.medical_store.exceptions.AppException;
 import com.khanhlms.medical_store.exceptions.ErrorCode;
 import com.khanhlms.medical_store.mapper.CategoriesMapper;
 import com.khanhlms.medical_store.repositories.CategoriesRepository;
+import com.khanhlms.medical_store.utills.ReflexUtills;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -41,5 +44,15 @@ public class CategoriesService {
                 .stream()
                 .map(item -> this.categoriesMapper.toResponse(item))
                 .toList();
+    }
+
+    public CategoryResponse handleUpdateCategory(UpdateCategoryRequest request){
+        CategoryEntity updateEntity = this.categoriesMapper.toEntity(request);
+
+        String id = request.getId();
+        CategoryEntity  categoryEntity = this.categoriesRepository.findById(id)
+                                        .orElseThrow(()-> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
+        ReflexUtills.mergeNonNullFields(categoryEntity, updateEntity);
+        return categoriesMapper.toResponse(this.categoriesRepository.save(categoryEntity));
     }
 }

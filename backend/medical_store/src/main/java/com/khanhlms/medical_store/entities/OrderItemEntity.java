@@ -1,5 +1,7 @@
 package com.khanhlms.medical_store.entities;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -30,4 +32,8 @@ public class OrderItemEntity extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "order_id")
     OrderEntity order;
+
+    @OneToMany(mappedBy = "orderItem", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude       // tránh vòng lặp toString
+    List<ReviewEntity> reviews;
 }

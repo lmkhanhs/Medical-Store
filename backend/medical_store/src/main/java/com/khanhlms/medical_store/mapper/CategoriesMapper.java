@@ -1,5 +1,6 @@
 package com.khanhlms.medical_store.mapper;
 
+import com.khanhlms.medical_store.dtos.categories.request.UpdateCategoryRequest;
 import com.khanhlms.medical_store.dtos.requests.categories.CreateCategoryRequest;
 import com.khanhlms.medical_store.dtos.response.categories.CategoryResponse;
 import com.khanhlms.medical_store.entities.CategoryEntity;
@@ -24,6 +25,10 @@ public abstract class CategoriesMapper {
     })
     public abstract CategoryEntity toEntity(CreateCategoryRequest categoryRequest);
     public abstract CategoryResponse toResponse(CategoryEntity categoryEntity);
+
+    @Mapping(source = "image", target = "thumbnailUrl", qualifiedByName = "mapImage")
+    public abstract CategoryEntity toEntity(UpdateCategoryRequest categoryRequest);
+
 
     @Named("mapImage")
     protected String mapImage(MultipartFile multipartFile){
