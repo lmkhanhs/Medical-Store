@@ -23,6 +23,7 @@ public abstract class OrderMapper {
 
     @Mapping(source = "orderEntity.payment", target =  "orderPayment", qualifiedByName = "mapPayment")
     @Mapping(source = "orderEntity", target = "orderItems", qualifiedByName = "mapItems")
+    @Mapping(source = "id", target = "order_id")
     public abstract OrderResponse toOrderResponse(OrderEntity orderEntity);
 
     @Named("mapPayment")

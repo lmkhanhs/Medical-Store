@@ -11,6 +11,7 @@ import com.khanhlms.medical_store.entities.ProductsEntity;
 
 @Mapper(componentModel = "spring")
 public abstract class OrderItemsMapper {
+    @Mapping(source = "id", target = "item_id")
     @Mapping(source = "product.name", target = "name")
     @Mapping(source = "product.originPrice", target = "originPrice")
     @Mapping(source = "product", target = "imageUrl", qualifiedByName = "mapImage")

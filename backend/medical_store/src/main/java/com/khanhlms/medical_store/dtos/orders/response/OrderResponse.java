@@ -9,6 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderResponse {
+    String order_id;
     Double totalAmount;
     String status;
     String address;

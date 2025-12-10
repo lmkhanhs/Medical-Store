@@ -15,6 +15,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class OrderItem {
+    String item_id;
     String name;
     String imageUrl;
     Double originPrice;
