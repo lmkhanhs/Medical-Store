@@ -22,6 +22,10 @@ public abstract class ReviewMapper {
     })
     public abstract ReviewEntity toEntity(CreateReviewRequest request);
 
+    @Mappings({
+        @Mapping(source = "user.username", target = "username"),
+        @Mapping(source = "user.avatarUrl", target = "avatarUrl")
+    })
     public abstract ReviewResponse toResponse(ReviewEntity entity);
 
     @Named("mapImage")

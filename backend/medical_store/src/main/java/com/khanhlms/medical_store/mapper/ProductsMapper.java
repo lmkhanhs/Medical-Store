@@ -1,5 +1,6 @@
 package com.khanhlms.medical_store.mapper;
 
+import com.khanhlms.medical_store.dtos.frequently.response.FrequentlyResponse;
 import com.khanhlms.medical_store.dtos.products.requests.CreateProductRequest;
 import com.khanhlms.medical_store.dtos.products.requests.IngredientRequest;
 import com.khanhlms.medical_store.dtos.products.response.CreateProductResponse;
@@ -32,6 +33,8 @@ public abstract class ProductsMapper {
     protected QuestionMapper  questionMapper;
     @Autowired
     private ReviewMapper reviewMapper;
+    @Autowired
+    private FrequentlyMapper frequentlyMapper; 
 /// /////////////
 
     @Mapping(source = "images", target = "imageUrl", qualifiedByName = "mapImageUrlPrimary")
@@ -118,9 +121,20 @@ public abstract class ProductsMapper {
             @Mapping(source = "images", target = "images", qualifiedByName = "mapImageUrl"),
             @Mapping(source = "questions", target = "questions", qualifiedByName = "mapQuestions"),
             @Mapping(source = "manufacturer.id", target = "manufactureId"),
-            @Mapping(source = "orderItems", target = "reviews", qualifiedByName = "mapReviewFromOrderItems")
+            @Mapping(source = "orderItems", target = "reviews", qualifiedByName = "mapReviewFromOrderItems"),
+            @Mapping(source = "frequently", target = "frequentlies", qualifiedByName = "mapFrequently")
     })
     public abstract DetailProduct toDetailProduct(ProductsEntity entity);
+
+    @Named("mapFrequently")
+    protected List<FrequentlyResponse> mapFrequentlyResponses(List<FrequentlyEntity> frequentlyEntities){
+        if (frequentlyEntities == null) {
+            return Collections.emptyList();
+        }
+        return frequentlyEntities.stream()
+                .map( item -> this.frequentlyMapper.toResponse(item))
+                .toList();
+    }
     @Named("mapQuestions")
     protected List<QuestionResponse> mapQuestions(List<QuestionEntity> questions) {
         if (questions == null) {return Collections.emptyList();}

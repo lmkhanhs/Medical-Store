@@ -13,5 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class ReviewResponse {
     String imageUrl;
     Integer rating; 
-    String comment;    
+    String comment;   
+    String username;
+    String avatarUrl; 
 }

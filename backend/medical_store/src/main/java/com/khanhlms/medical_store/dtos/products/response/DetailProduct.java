@@ -1,6 +1,7 @@
 package com.khanhlms.medical_store.dtos.products.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.khanhlms.medical_store.dtos.frequently.response.FrequentlyResponse;
 import com.khanhlms.medical_store.dtos.manufacturer.response.ManufacturerResponse;
 import com.khanhlms.medical_store.dtos.questions.response.QuestionResponse;
 import com.khanhlms.medical_store.dtos.reviews.response.ReviewResponse;
@@ -45,5 +46,5 @@ public class DetailProduct {
     String preserve;
     List<QuestionResponse>  questions;
     List<ReviewResponse> reviews;
-
+    List<FrequentlyResponse> frequentlies;
 }
