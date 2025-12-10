@@ -1,5 +1,7 @@
 package com.khanhlms.medical_store.dtos.orders.response;
 
+import java.time.LocalDateTime;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,4 +26,5 @@ public class OrderItem {
     Double discountPrice;
     Integer quantity;
     Double total;
+    LocalDateTime createdAt;
 }

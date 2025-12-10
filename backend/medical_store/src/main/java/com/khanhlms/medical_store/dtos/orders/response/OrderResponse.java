@@ -1,5 +1,6 @@
 package com.khanhlms.medical_store.dtos.orders.response;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.*;
 
@@ -19,4 +20,5 @@ public class OrderResponse {
     String phoneNumber;
     OrderPayment orderPayment;
     List<OrderItem> orderItems;
+    LocalDateTime createdAt;
 }

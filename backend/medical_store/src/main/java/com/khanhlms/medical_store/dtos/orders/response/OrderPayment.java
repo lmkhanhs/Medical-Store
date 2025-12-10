@@ -21,5 +21,5 @@ public class OrderPayment {
     String paymentMethod;
     String status;
     String paymentNote;
-    LocalDateTime createdDate;
+    LocalDateTime createdAt;
 }

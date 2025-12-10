@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "payments")
-public class PaymentEntity {
+public class PaymentEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
@@ -24,8 +24,7 @@ public class PaymentEntity {
     String transactionId;
     @Column(columnDefinition = "TEXT")
     String paymentNote;
-    String code ;
-    LocalDateTime createdDate;
+    String code;
     @OneToOne
     @JoinColumn(name = "order_id", nullable = false, unique = true)
     OrderEntity order;
