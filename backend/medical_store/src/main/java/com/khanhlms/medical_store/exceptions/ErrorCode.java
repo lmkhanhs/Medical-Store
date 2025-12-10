@@ -23,6 +23,9 @@ public enum ErrorCode {
     QUESTION_NOT_FOUND(1010, "question not found", HttpStatus.BAD_REQUEST),
     CATEGORY_EXITSTED(1011, "category exitsted", HttpStatus.INTERNAL_SERVER_ERROR),
     PAYMENT_NOT_EXIST(1012, "payment not exist", HttpStatus.BAD_REQUEST),
+    ORDER_NOT_EXIST(1013, "order not exits", HttpStatus.BAD_REQUEST),
+    ORDER_ITEM_NOT_EXITS(1014, "order item not exits", HttpStatus.BAD_REQUEST),
+    
     INVALID_REQUEST(1011, "invalid request", HttpStatus.BAD_REQUEST);
 
     private final int code;

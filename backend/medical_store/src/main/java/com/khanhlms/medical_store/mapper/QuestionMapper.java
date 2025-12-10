@@ -1,26 +1,21 @@
 package com.khanhlms.medical_store.mapper;
 
-import com.khanhlms.medical_store.dtos.answers.response.AnswerResponse;
-import com.khanhlms.medical_store.dtos.questions.request.CreateQuestionRequest;
-import com.khanhlms.medical_store.dtos.questions.response.QuestionResponse;
-import com.khanhlms.medical_store.dtos.requests.CreateUserRequest;
-import com.khanhlms.medical_store.entities.AnswersEntity;
-import com.khanhlms.medical_store.entities.ProductsEntity;
-import com.khanhlms.medical_store.entities.QuestionEntity;
-import com.khanhlms.medical_store.entities.UserEntity;
-import com.khanhlms.medical_store.exceptions.AppException;
-import com.khanhlms.medical_store.exceptions.ErrorCode;
-import com.khanhlms.medical_store.repositories.ProductRepository;
-import com.khanhlms.medical_store.repositories.QuestionRepository;
-import com.khanhlms.medical_store.repositories.UserRepository;
+import java.util.Collections;
+import java.util.List;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import org.mapstruct.Named;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Collections;
-import java.util.List;
+import com.khanhlms.medical_store.dtos.answers.response.AnswerResponse;
+import com.khanhlms.medical_store.dtos.questions.request.CreateQuestionRequest;
+import com.khanhlms.medical_store.dtos.questions.response.QuestionResponse;
+import com.khanhlms.medical_store.entities.AnswersEntity;
+import com.khanhlms.medical_store.entities.QuestionEntity;
+import com.khanhlms.medical_store.repositories.ProductRepository;
+import com.khanhlms.medical_store.repositories.UserRepository;
 
 @Mapper(componentModel = "spring")
 public abstract class QuestionMapper {

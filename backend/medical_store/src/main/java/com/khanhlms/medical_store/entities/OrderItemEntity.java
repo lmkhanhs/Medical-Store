@@ -29,11 +29,12 @@ public class OrderItemEntity extends BaseEntity {
     Integer quantity;
     Double total;
 
+    Boolean commented;
+
     @ManyToOne
     @JoinColumn(name = "order_id")
     OrderEntity order;
 
     @OneToMany(mappedBy = "orderItem", cascade = CascadeType.ALL, orphanRemoval = true)
-    @ToString.Exclude       // tránh vòng lặp toString
     List<ReviewEntity> reviews;
 }

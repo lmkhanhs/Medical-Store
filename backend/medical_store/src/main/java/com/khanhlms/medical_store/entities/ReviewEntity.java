@@ -32,7 +32,6 @@ public class ReviewEntity extends BaseEntity {
     OrderItemEntity orderItem;
     String imageUrl;
     Integer rating;      // 1–5
-    String title;        // tiêu đề ngắn
     @Column(columnDefinition = "TEXT")
     String comment;      // nội dung
 
