@@ -7,6 +7,7 @@ import com.khanhlms.medical_store.dtos.products.response.DetailProduct;
 import com.khanhlms.medical_store.dtos.products.response.IngredientResponse;
 import com.khanhlms.medical_store.dtos.products.response.ProductResponse;
 import com.khanhlms.medical_store.dtos.questions.response.QuestionResponse;
+import com.khanhlms.medical_store.dtos.reviews.response.ReviewResponse;
 import com.khanhlms.medical_store.entities.*;
 import com.khanhlms.medical_store.exceptions.AppException;
 import com.khanhlms.medical_store.exceptions.ErrorCode;
@@ -29,7 +30,8 @@ public abstract class ProductsMapper {
     protected CategoriesRepository categoriesRepository;
     @Autowired
     protected QuestionMapper  questionMapper;
-
+    @Autowired
+    private ReviewMapper reviewMapper;
 /// /////////////
 
     @Mapping(source = "images", target = "imageUrl", qualifiedByName = "mapImageUrlPrimary")
@@ -115,7 +117,8 @@ public abstract class ProductsMapper {
             @Mapping(source = "category.name", target = "category"),
             @Mapping(source = "images", target = "images", qualifiedByName = "mapImageUrl"),
             @Mapping(source = "questions", target = "questions", qualifiedByName = "mapQuestions"),
-            @Mapping(source = "manufacturer.id", target = "manufactureId")
+            @Mapping(source = "manufacturer.id", target = "manufactureId"),
+            @Mapping(source = "orderItems", target = "reviews", qualifiedByName = "mapReviewFromOrderItems")
     })
     public abstract DetailProduct toDetailProduct(ProductsEntity entity);
     @Named("mapQuestions")
@@ -125,6 +128,16 @@ public abstract class ProductsMapper {
                 .map(questionEntity -> this.questionMapper.toQuestionResponse(questionEntity))
                 .toList();
     }
+    @Named("mapReviewFromOrderItems")
+    protected List<ReviewResponse> mapReviewFromOrderItems(List<OrderItemEntity> orderItems) {
+        if (orderItems == null) return Collections.emptyList();
+
+        return orderItems.stream()
+                .flatMap(item -> item.getReviews().stream())
+                .map(reviewMapper::toResponse)
+                .toList();
+    }
+
     @Named("mapIngredientToResponse")
     protected List<IngredientResponse> mapIngredientToResponse(List<IngredientEntity> ingredients) {
         if (ingredients == null) {return Collections.emptyList();}

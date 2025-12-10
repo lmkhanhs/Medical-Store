@@ -54,6 +54,8 @@ public class ReviewSerevice {
         if (!orderItemEntity.getCommented()){
             ReviewEntity entity = this.reviewMapper.toEntity(createReviewRequest);
             entity.setUser(userEntity);
+            entity.setProduct(orderItemEntity.getProduct());
+            entity.setOrderItem(orderItemEntity);
             this.reviewRepository.save(entity);
             orderItemEntity.setCommented(true);
             this.orderItemRepository.save(orderItemEntity);

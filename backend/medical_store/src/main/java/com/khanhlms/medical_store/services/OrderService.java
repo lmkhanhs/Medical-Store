@@ -55,6 +55,7 @@ public class OrderService {
             OrderItemEntity orderItem = OrderItemEntity.builder()
                     .product(product)
                     .price(price)
+                    .commented(false)
                     .discountPrice(discountPrice)
                     .quantity(quantity)
                     .total(totalPrice)

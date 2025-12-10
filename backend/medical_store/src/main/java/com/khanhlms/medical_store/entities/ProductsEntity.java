@@ -48,6 +48,9 @@ public class ProductsEntity extends BaseEntity {
     Boolean isActive;
     Boolean isDeleted;
 //
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = false)
+    List<OrderItemEntity> orderItems;
+
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "manufacturer_id", nullable = false)
