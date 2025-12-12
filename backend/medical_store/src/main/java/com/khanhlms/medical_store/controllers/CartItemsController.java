@@ -37,11 +37,11 @@ public class CartItemsController {
                 .build();
     }
     @PutMapping("/cart/cart-items")
-    public ApiResponse<CartItemEntity> changeQuanlity(@RequestBody UpdateCartItemQuanityRequest cartItemQuanityRequest ){
-        return ApiResponse.<CartItemEntity>builder()
+    public ApiResponse<Void> changeQuanlity(@RequestBody UpdateCartItemQuanityRequest cartItemQuanityRequest ){
+        var data = this.cartItemsService.changeQuanlityItem(cartItemQuanityRequest);
+        return ApiResponse.<Void>builder()
             .code(200)
             .message("update quanlity successfully!")
-            .data(this.cartItemsService.changeQuanlityItem(cartItemQuanityRequest))
             .build();
     }
 

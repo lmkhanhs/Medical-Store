@@ -75,7 +75,7 @@ public class ProductsController {
     public ApiResponse<DetailProduct> updateProduct(
         @ModelAttribute UpdateProductRequest updateProduct,
         @RequestParam("ingredients") String ingredientsJson,
-        @PathVariable("id") String productId
+        @PathVariable("id") String id
     ) throws JsonMappingException, JsonProcessingException{
         ObjectMapper mapper = new ObjectMapper();
         List<IngredientRequest> ingredients = mapper.readValue(
@@ -84,7 +84,7 @@ public class ProductsController {
         return ApiResponse.<DetailProduct>builder()
                 .code(200)
                 .message("Update product successfully!")
-                .data(this.productsSercvice.handlerUpdateProduct(productId, updateProduct, ingredients))
+                .data(this.productsSercvice.handlerUpdateProduct(id, updateProduct, ingredients))
                 .build();
     }
 

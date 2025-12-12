@@ -178,4 +178,19 @@ public abstract class ProductsMapper {
                 })
                 .toList();
     }
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mappings({
+        @Mapping(source = "manufacturerId", target = "manufacturer", qualifiedByName = "mapManufacturerById"),
+        @Mapping(source = "categoryId", target = "category", qualifiedByName = "mapCategoryById"),
+        @Mapping(source = "images", target = "images", qualifiedByName = "mapImagesEntity"),
+        @Mapping(source = "price", target = "originPrice"),
+        @Mapping(source = "currency", target = "currency"),
+        @Mapping(source = "quantity", target = "quantity")
+    })
+    public abstract void updateEntity(
+            @MappingTarget ProductsEntity entity,
+            UpdateProductRequest request
+    );
+
 }

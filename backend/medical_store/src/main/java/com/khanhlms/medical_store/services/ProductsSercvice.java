@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -57,19 +58,34 @@ public class ProductsSercvice {
         return this.productsMapper.toCreateProductResponse(productRepository.save(productsEntity));
     }
 
-    private List<IngredientEntity> mapIngredientEntity(List<IngredientRequest> ingredientRequests){
-        if (ingredientRequests == null || ingredientRequests.isEmpty()) {return Collections.emptyList();}
-        return ingredientRequests.stream()
-                .map(ingredientRequest -> {
-                    return  IngredientEntity.builder()
-                            .name(ingredientRequest.getName())
-                            .description(ingredientRequest.getDescription())
-                            .amount(ingredientRequest.getAmount())
-                            .unit(ingredientRequest.getUnit())
-                            .build();
-                })
-                .toList();
+    // private List<IngredientEntity> mapIngredientEntity(List<IngredientRequest> ingredientRequests){
+    //     if (ingredientRequests == null || ingredientRequests.isEmpty()) {return Collections.emptyList();}
+    //     return ingredientRequests.stream()
+    //             .map(ingredientRequest -> {
+    //                 return  IngredientEntity.builder()
+    //                         .name(ingredientRequest.getName())
+    //                         .description(ingredientRequest.getDescription())
+    //                         .amount(ingredientRequest.getAmount())
+    //                         .unit(ingredientRequest.getUnit())
+    //                         .build();
+    //             })
+    //             .toList();
+    // }
+    private List<IngredientEntity> mapIngredientEntity(List<IngredientRequest> ingredientRequests) {
+    if (ingredientRequests == null || ingredientRequests.isEmpty()) {
+        return new ArrayList<>();
     }
+
+    return ingredientRequests.stream()
+            .map(req -> IngredientEntity.builder()
+                    .name(req.getName())
+                    .description(req.getDescription())
+                    .amount(req.getAmount())
+                    .unit(req.getUnit())
+                    .build())
+            .collect(Collectors.toCollection(ArrayList::new)); // ✅ MUTABLE
+}
+
 
     public List<ProductResponse> handGetProduct( String redisKey,Pageable pageable) {
         List<ProductResponse> result = null;
@@ -122,33 +138,48 @@ public class ProductsSercvice {
                 .map(product -> this.productsMapper.toProductResponse(product))
                 .toList();
     }
-    public DetailProduct handlerUpdateProduct(String productId , UpdateProductRequest productRequest,  List<IngredientRequest>  ingredients){
-        
-        ProductsEntity productsEntityOld =  this.productRepository.findById(productId)
-                                            .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
-        ProductsEntity productsEntity =  this.productsMapper.toEntity(productRequest);
-        String name = productsEntity.getName();
-        if (this.productRepository.findByName(name).isPresent()) {
-            throw new AppException(ErrorCode.PRODUCT_EXISTED);
-        }
-        Date productDate = productsEntity.getProductDate();
-        Date expirationDate = productsEntity.getExpirationDate();
-        if (productDate.getTime() > expirationDate.getTime()) {
+    public DetailProduct handlerUpdateProduct(
+        String productId,
+        UpdateProductRequest request,
+        List<IngredientRequest> ingredients
+) {
+
+    ProductsEntity product = productRepository.findById(productId)
+            .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+
+    // check duplicate name
+    if (request.getName() != null) {
+        productRepository.findByName(request.getName())
+                .filter(p -> !p.getId().equals(productId))
+                .ifPresent(p -> {
+                    throw new AppException(ErrorCode.PRODUCT_EXISTED);
+                });
+    }
+
+    // check date
+    if (request.getProductDate() != null && request.getExpirationDate() != null) {
+        if (request.getProductDate().after(request.getExpirationDate())) {
             throw new AppException(ErrorCode.EXPIRERATION_EXCEPTION);
         }
-        
-        if (!ingredients.isEmpty() && !Objects.isNull(ingredients)){
-            productsEntity.setIngredients(mapIngredientEntity(ingredients));
-        }
-        
-        if (productsEntity.getImages() != null) {
-            productsEntity.getImages().forEach(img -> img.setProduct(productsEntity));
-        }
-        if (productsEntity.getIngredients() != null) {
-            productsEntity.getIngredients().forEach(ingredient -> ingredient.setProduct(productsEntity));
-        }
-        ReflexUtills.mergeNonNullFields(productsEntityOld, productsEntity);
-
-        return this.productsMapper.toDetailProduct(this.productRepository.save(productsEntityOld));
     }
+
+    // 🔥 UPDATE FIELD
+    productsMapper.updateEntity(product, request);
+
+    // 🔥 UPDATE INGREDIENTS
+    if (ingredients != null) {
+        product.getIngredients().clear();
+        List<IngredientEntity> newIngredients = mapIngredientEntity(ingredients);
+        newIngredients.forEach(i -> i.setProduct(product));
+        product.getIngredients().addAll(newIngredients);
+    }
+
+    // images
+    if (product.getImages() != null) {
+        product.getImages().forEach(img -> img.setProduct(product));
+    }
+
+    return productsMapper.toDetailProduct(productRepository.save(product));
+}
+
 }

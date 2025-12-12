@@ -14,13 +14,16 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     ResponseEntity<ApiResponse<String>> handleRuntimeException(RuntimeException ex) {
-        ApiResponse<String> apiResponse = ApiResponse.<String>builder()
-                .message("Exception RuntimeErorr")
-                .data(ex.getMessage())
-                .build();
+    ex.printStackTrace();
 
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
-    }
+    ApiResponse<String> apiResponse = ApiResponse.<String>builder()
+            .message("RuntimeException")
+            .data(ex.getClass().getSimpleName() + ": " + ex.getMessage())
+            .build();
+
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiResponse);
+}
+
 
     @ExceptionHandler(AppException.class)
     ResponseEntity<ApiResponse<String>> handleAppException(AppException ex) {
