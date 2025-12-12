@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -42,7 +44,18 @@ public class OrderController {
                 .build();
     }
     @GetMapping("")
-    public ApiResponse<List<OrderResponse>> getOrders(@RequestParam(name = "status", defaultValue = "PENDING") String status) {
+    public ApiResponse<List<OrderResponse>> getOrdersForUser(@RequestParam(name = "status", defaultValue = "PENDING") String status) {
+        String username = authenticationUtills.getUserName();
+
+        return ApiResponse.<List<OrderResponse>>builder()
+            .code(200)
+            .message("Get order by user has status: " + status + " successfully!")
+            .data(this.orderService.getOrderforUser(username, status))
+            .build();
+    }
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/all")
+    public ApiResponse<List<OrderResponse>> getOrders(@RequestParam(name = "status", defaultValue = "ALL") String status) {
         String username = authenticationUtills.getUserName();
 
         return ApiResponse.<List<OrderResponse>>builder()

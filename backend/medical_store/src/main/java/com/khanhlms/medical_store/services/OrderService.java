@@ -121,6 +121,20 @@ public class OrderService {
                         .map(orderMapper::toOrderResponse)
                         .toList();
                 }
-
-
+        public List<OrderResponse> getAllOrder(String status){
+                if (status.equals("ALL")){
+                        return orderRepository.findAll()
+                        .stream()
+                        .map(orderMapper::toOrderResponse)
+                        .toList();
+                }
+                else {
+                       return orderRepository.findAll()
+                        .stream()
+                        .filter(order -> order.getStatus().equals(OrderStatus.valueOf(status).toString()))
+                        .map(orderMapper::toOrderResponse)
+                        .toList(); 
+                }
+        }
+ 
 }
