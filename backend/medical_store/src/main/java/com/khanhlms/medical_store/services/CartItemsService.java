@@ -1,6 +1,7 @@
 package com.khanhlms.medical_store.services;
 
 import com.khanhlms.medical_store.dtos.cartItems.request.CreateCartItemRequest;
+import com.khanhlms.medical_store.dtos.cartItems.request.UpdateCartItemQuanityRequest;
 import com.khanhlms.medical_store.dtos.cartItems.response.CartItemResponse;
 import com.khanhlms.medical_store.dtos.cartItems.response.CreateCartItemResponse;
 import com.khanhlms.medical_store.entities.CartItemEntity;
@@ -64,6 +65,21 @@ public class CartItemsService {
                 .get()
                 .map(item -> this.cartsMapper.toCartItemResponse(item))
                 .toList();
+    }
+    public CartItemEntity changeQuanlityItem(UpdateCartItemQuanityRequest cartItemQuanityRequest ){
+        String itemCartId = cartItemQuanityRequest.getItemCartId();
+        Integer quanlity = cartItemQuanityRequest.getQuantity();
+
+        if (quanlity < 0){
+            throw new AppException(ErrorCode.INVALID_REQUEST);
+        }
+        CartItemEntity cartItemEntity =  this.cartItemsRespository.findById(itemCartId)
+                                        .orElseThrow(() -> new AppException(ErrorCode.CARD_ITEM_NOT_FOUND));
+        
+        cartItemEntity.setQuantity(quanlity);
+
+        return this.cartItemsRespository.save(cartItemEntity);
+
     }
 
 }

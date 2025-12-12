@@ -1,9 +1,11 @@
 package com.khanhlms.medical_store.controllers;
 
 import com.khanhlms.medical_store.dtos.cartItems.request.CreateCartItemRequest;
+import com.khanhlms.medical_store.dtos.cartItems.request.UpdateCartItemQuanityRequest;
 import com.khanhlms.medical_store.dtos.cartItems.response.CartItemResponse;
 import com.khanhlms.medical_store.dtos.cartItems.response.CreateCartItemResponse;
 import com.khanhlms.medical_store.dtos.response.ApiResponse;
+import com.khanhlms.medical_store.entities.CartItemEntity;
 import com.khanhlms.medical_store.services.CartItemsService;
 import com.khanhlms.medical_store.utills.AuthenticationUtills;
 import lombok.AccessLevel;
@@ -33,6 +35,14 @@ public class CartItemsController {
                 .message("create cart item successfully")
                 .data(this.cartItemsService.handCreateCartItems(username, request))
                 .build();
+    }
+    @PutMapping("/cart/cart-items")
+    public ApiResponse<CartItemEntity> changeQuanlity(@RequestBody UpdateCartItemQuanityRequest cartItemQuanityRequest ){
+        return ApiResponse.<CartItemEntity>builder()
+            .code(200)
+            .message("update quanlity successfully!")
+            .data(this.cartItemsService.changeQuanlityItem(cartItemQuanityRequest))
+            .build();
     }
 
     @GetMapping("/carts/items/mycarts")
