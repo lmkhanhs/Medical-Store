@@ -27,6 +27,7 @@ public enum ErrorCode {
     ORDER_NOT_EXIST(1013, "order not exits", HttpStatus.BAD_REQUEST),
     ORDER_ITEM_NOT_EXITS(1014, "order item not exits", HttpStatus.BAD_REQUEST),
     CARD_ITEM_NOT_FOUND(1016, "card item not found", HttpStatus.BAD_REQUEST),
+    QUANTITY_EXCEEDS_STOCK(1017, "Insufficient product stock", HttpStatus.CONFLICT),
     INVALID_REQUEST(1011, "invalid request", HttpStatus.BAD_REQUEST);
 
     private final int code;

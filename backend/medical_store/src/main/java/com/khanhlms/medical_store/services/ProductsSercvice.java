@@ -193,5 +193,12 @@ public class ProductsSercvice {
         log.info("🔄 Start recalculating product ratings...");
         this.productRepository.recalculateAllProductRatings();
     }
+    public void handleDeleteProduct(String id){
+        ProductsEntity productsEntity =  this.productRepository.findById(id)
+                                        .orElseThrow(()-> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+                            
+        productsEntity.setIsDeleted(true);
+        this.productRepository.save(productsEntity);
+    }
 
 }

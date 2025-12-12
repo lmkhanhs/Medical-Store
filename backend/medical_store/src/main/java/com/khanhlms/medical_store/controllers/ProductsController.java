@@ -87,7 +87,15 @@ public class ProductsController {
                 .data(this.productsSercvice.handlerUpdateProduct(id, updateProduct, ingredients))
                 .build();
     }
-
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @DeleteMapping("/product/{id}")
+    public ApiResponse<Void> deleteProduct(@PathVariable String id){
+        this.productsSercvice.handleDeleteProduct(id);
+        return ApiResponse.<Void>builder()
+                        .code(200)
+                        .message("delete product successfully!")
+                        .build();
+    }
 
     @GetMapping("/products")
     public ApiResponse<List<ProductResponse>> getProduct(

@@ -22,6 +22,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -29,14 +30,16 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+
 public class OrderService {
     final OrderRepository orderRepository;
     final UserRepository userRepository;
     final ProductRepository productRepository;
     final VnPayService vnPayService;
     final OrderMapper orderMapper;
-    
+    @Transactional
     public CreateOrderResponse createOrder(HttpServletRequest httpServletRequest, String username, CreateOrderRequest request) {
+        
         List<ItemOrder> itemOrders = request.getItemOrders();
         List<OrderItemEntity> orderItems = new LinkedList<>();
         Double totalAmount = 0.0 ;
@@ -63,6 +66,14 @@ public class OrderService {
                     .product(product)
                     .build();
             orderItems.add(orderItem);
+
+            if (product.getQuantity() - quantity > 0) {
+                product.setQuantity(product.getQuantity() - quantity);
+                this.productRepository.save(product);
+            }else{
+                throw new AppException(ErrorCode.QUANTITY_EXCEEDS_STOCK);
+            }
+            
         }
         PaymentEntity paymentEntity = PaymentEntity.builder()
                 .paymentNote(request.getPaymentNote())
