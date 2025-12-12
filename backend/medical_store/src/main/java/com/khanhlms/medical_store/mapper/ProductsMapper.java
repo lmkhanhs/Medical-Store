@@ -179,6 +179,7 @@ public abstract class ProductsMapper {
                 .toList();
     }
 
+    
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mappings({
         @Mapping(source = "manufacturerId", target = "manufacturer", qualifiedByName = "mapManufacturerById"),
