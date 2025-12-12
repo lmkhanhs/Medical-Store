@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.khanhlms.medical_store.dtos.products.requests.CreateProductRequest;
 import com.khanhlms.medical_store.dtos.products.requests.IngredientRequest;
+import com.khanhlms.medical_store.dtos.products.requests.UpdateProductRequest;
 import com.khanhlms.medical_store.dtos.products.response.CreateProductResponse;
 import com.khanhlms.medical_store.dtos.products.response.DetailProduct;
 import com.khanhlms.medical_store.dtos.products.response.ProductResponse;
@@ -14,6 +15,8 @@ import com.khanhlms.medical_store.exceptions.ErrorCode;
 import com.khanhlms.medical_store.mapper.ProductsMapper;
 import com.khanhlms.medical_store.repositories.ProductRepository;
 import com.khanhlms.medical_store.utills.BaseRedisUtils;
+import com.khanhlms.medical_store.utills.ReflexUtills;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -118,5 +121,34 @@ public class ProductsSercvice {
         return this.productRepository.filterProducts(filters, page, size).stream()
                 .map(product -> this.productsMapper.toProductResponse(product))
                 .toList();
+    }
+    public DetailProduct handlerUpdateProduct(String productId , UpdateProductRequest productRequest,  List<IngredientRequest>  ingredients){
+        
+        ProductsEntity productsEntityOld =  this.productRepository.findById(productId)
+                                            .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+        ProductsEntity productsEntity =  this.productsMapper.toEntity(productRequest);
+        String name = productsEntity.getName();
+        if (this.productRepository.findByName(name).isPresent()) {
+            throw new AppException(ErrorCode.PRODUCT_EXISTED);
+        }
+        Date productDate = productsEntity.getProductDate();
+        Date expirationDate = productsEntity.getExpirationDate();
+        if (productDate.getTime() > expirationDate.getTime()) {
+            throw new AppException(ErrorCode.EXPIRERATION_EXCEPTION);
+        }
+        
+        if (!ingredients.isEmpty() && !Objects.isNull(ingredients)){
+            productsEntity.setIngredients(mapIngredientEntity(ingredients));
+        }
+        
+        if (productsEntity.getImages() != null) {
+            productsEntity.getImages().forEach(img -> img.setProduct(productsEntity));
+        }
+        if (productsEntity.getIngredients() != null) {
+            productsEntity.getIngredients().forEach(ingredient -> ingredient.setProduct(productsEntity));
+        }
+        ReflexUtills.mergeNonNullFields(productsEntityOld, productsEntity);
+
+        return this.productsMapper.toDetailProduct(this.productRepository.save(productsEntityOld));
     }
 }

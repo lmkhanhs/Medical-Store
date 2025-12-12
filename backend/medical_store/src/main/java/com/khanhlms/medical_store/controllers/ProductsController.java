@@ -1,6 +1,8 @@
 package com.khanhlms.medical_store.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.khanhlms.medical_store.dtos.answers.request.CreateAnswersRequest;
 import com.khanhlms.medical_store.dtos.answers.response.AnswerResponse;
@@ -10,6 +12,7 @@ import com.khanhlms.medical_store.dtos.frequently.request.CreateFrequentlyReques
 import com.khanhlms.medical_store.dtos.frequently.response.FrequentlyResponse;
 import com.khanhlms.medical_store.dtos.products.requests.CreateProductRequest;
 import com.khanhlms.medical_store.dtos.products.requests.IngredientRequest;
+import com.khanhlms.medical_store.dtos.products.requests.UpdateProductRequest;
 import com.khanhlms.medical_store.dtos.products.response.CreateProductResponse;
 import com.khanhlms.medical_store.dtos.products.response.DetailProduct;
 import com.khanhlms.medical_store.dtos.products.response.ProductResponse;
@@ -67,6 +70,24 @@ public class ProductsController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PutMapping(value = "/products/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponse<DetailProduct> updateProduct(
+        @ModelAttribute UpdateProductRequest updateProduct,
+        @RequestParam("ingredients") String ingredientsJson,
+        @PathVariable("id") String productId
+    ) throws JsonMappingException, JsonProcessingException{
+        ObjectMapper mapper = new ObjectMapper();
+        List<IngredientRequest> ingredients = mapper.readValue(
+                ingredientsJson, new TypeReference<List<IngredientRequest>>() {}
+        );
+        return ApiResponse.<DetailProduct>builder()
+                .code(200)
+                .message("Update product successfully!")
+                .data(this.productsSercvice.handlerUpdateProduct(productId, updateProduct, ingredients))
+                .build();
+    }
+
 
     @GetMapping("/products")
     public ApiResponse<List<ProductResponse>> getProduct(

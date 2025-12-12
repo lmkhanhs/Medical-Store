@@ -20,6 +20,7 @@ public enum ErrorCode {
     EXPIRERATION_EXCEPTION(1007, "the expiration date must be later than the production date", HttpStatus.BAD_REQUEST),
     USER_NOT_EXISTED(1008, "user not existed", HttpStatus.BAD_REQUEST),
     PRODUCT_NOT_FOUND(1009, "product not found", HttpStatus.BAD_REQUEST),
+    PRODUCT_EXISTED(1015, "product exited", HttpStatus.BAD_REQUEST),
     QUESTION_NOT_FOUND(1010, "question not found", HttpStatus.BAD_REQUEST),
     CATEGORY_EXITSTED(1011, "category exitsted", HttpStatus.INTERNAL_SERVER_ERROR),
     PAYMENT_NOT_EXIST(1012, "payment not exist", HttpStatus.BAD_REQUEST),

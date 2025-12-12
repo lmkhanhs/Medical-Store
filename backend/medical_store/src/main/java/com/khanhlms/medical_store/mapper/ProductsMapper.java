@@ -3,6 +3,7 @@ package com.khanhlms.medical_store.mapper;
 import com.khanhlms.medical_store.dtos.frequently.response.FrequentlyResponse;
 import com.khanhlms.medical_store.dtos.products.requests.CreateProductRequest;
 import com.khanhlms.medical_store.dtos.products.requests.IngredientRequest;
+import com.khanhlms.medical_store.dtos.products.requests.UpdateProductRequest;
 import com.khanhlms.medical_store.dtos.products.response.CreateProductResponse;
 import com.khanhlms.medical_store.dtos.products.response.DetailProduct;
 import com.khanhlms.medical_store.dtos.products.response.IngredientResponse;
@@ -86,6 +87,17 @@ public abstract class ProductsMapper {
             @Mapping(source = "quantity", target = "quantity")
     })
     public abstract ProductsEntity toEntity(CreateProductRequest request);
+
+
+    @Mappings({
+            @Mapping(source = "manufacturerId", target = "manufacturer", qualifiedByName = "mapManufacturerById"),
+            @Mapping(source = "categoryId", target = "category", qualifiedByName = "mapCategoryById"),
+            @Mapping(source = "images", target = "images", qualifiedByName = "mapImagesEntity"),
+            @Mapping(source = "price", target = "originPrice"),
+            @Mapping(source = "currency", target = "currency"),
+            @Mapping(source = "quantity", target = "quantity")
+    })
+    public abstract ProductsEntity toEntity(UpdateProductRequest updateProductRequest);
 
     @Named("mapManufacturerById")
     protected ManufacturerEntity mapManufacturerById(String manufacturerId) {
