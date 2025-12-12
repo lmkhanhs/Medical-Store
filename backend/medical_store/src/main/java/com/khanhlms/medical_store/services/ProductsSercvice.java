@@ -20,8 +20,12 @@ import com.khanhlms.medical_store.utills.ReflexUtills;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -30,6 +34,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Slf4j
 public class ProductsSercvice {
     ProductRepository productRepository;
     ProductsMapper  productsMapper;
@@ -142,7 +147,7 @@ public class ProductsSercvice {
         String productId,
         UpdateProductRequest request,
         List<IngredientRequest> ingredients
-) {
+    ) {
 
     ProductsEntity product = productRepository.findById(productId)
             .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
@@ -179,7 +184,14 @@ public class ProductsSercvice {
         product.getImages().forEach(img -> img.setProduct(product));
     }
 
-    return productsMapper.toDetailProduct(productRepository.save(product));
-}
+        return productsMapper.toDetailProduct(productRepository.save(product));
+    }   
+    
+    @Scheduled(fixedRate = 1 * 60 * 1000) // 2 phút
+    @Transactional
+    public void updateAvgStrat(){
+        log.info("🔄 Start recalculating product ratings...");
+        this.productRepository.recalculateAllProductRatings();
+    }
 
 }

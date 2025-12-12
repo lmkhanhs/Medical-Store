@@ -107,4 +107,22 @@ public class ProductCustomImpl implements ProductCustom {
 
         return query.getResultList();
     }
+
+    @Override
+    public void recalculateAllProductRatings() {
+
+        String sql = """
+            UPDATE products p
+            LEFT JOIN (
+                SELECT product_id, AVG(rating) AS avg_rating
+                FROM reviews
+                GROUP BY product_id
+            ) r ON p.id = r.product_id
+            SET p.rating_avg = COALESCE(r.avg_rating, 0)
+        """;
+
+        em.createNativeQuery(sql).executeUpdate();
+    }
+
+
 }

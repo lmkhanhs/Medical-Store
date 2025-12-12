@@ -9,4 +9,5 @@ import java.util.Map;
 public interface ProductCustom {
     List<ProductsEntity> getProductsByKeyword(String keyword);
     List<ProductsEntity> filterProducts(Map<String, String> filters,Integer page, Integer size);
+    void recalculateAllProductRatings();
 }
