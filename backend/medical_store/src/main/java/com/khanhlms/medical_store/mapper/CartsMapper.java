@@ -30,7 +30,8 @@ public abstract class CartsMapper {
             @Mapping(source = "product.discount.endDate", target = "discountEnd"),
             @Mapping(source = "product.discount.percent", target = "percent"),
             @Mapping(source = "product.unit", target = "unit"),
-            @Mapping(source = "product.currency", target = "currency")
+            @Mapping(source = "product.currency", target = "currency"),
+            @Mapping(source = "id", target = "itemCardId")
     })
     public abstract CartItemResponse toCartItemResponse(CartItemEntity cartItemEntity);
     @Named("toImageURL")

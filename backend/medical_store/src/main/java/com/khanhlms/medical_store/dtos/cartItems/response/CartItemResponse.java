@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 public class CartItemResponse {
+    String itemCardId;
     String productId;
     String productName;
     String imageUrl;
