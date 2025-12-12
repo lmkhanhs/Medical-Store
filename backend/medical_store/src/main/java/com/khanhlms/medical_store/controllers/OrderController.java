@@ -61,7 +61,7 @@ public class OrderController {
         return ApiResponse.<List<OrderResponse>>builder()
             .code(200)
             .message("Get order by user has status: " + status + " successfully!")
-            .data(this.orderService.getOrderforUser(username, status))
+            .data(this.orderService.getAllOrder( status))
             .build();
     }
     
