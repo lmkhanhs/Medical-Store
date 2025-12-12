@@ -3,6 +3,7 @@ package com.khanhlms.medical_store.services;
 import com.khanhlms.medical_store.configuration.VnPayConfig;
 import com.khanhlms.medical_store.dtos.orders.request.CreateOrderRequest;
 import com.khanhlms.medical_store.dtos.orders.request.ItemOrder;
+import com.khanhlms.medical_store.dtos.orders.request.UpdateStatusOrderRequest;
 import com.khanhlms.medical_store.dtos.orders.response.CreateOrderResponse;
 import com.khanhlms.medical_store.dtos.orders.response.OrderResponse;
 import com.khanhlms.medical_store.entities.*;
@@ -135,6 +136,13 @@ public class OrderService {
                         .map(orderMapper::toOrderResponse)
                         .toList(); 
                 }
+        }
+        public OrderResponse setOrderStatus(UpdateStatusOrderRequest orderRequest){
+                OrderEntity orderEntity = this.orderRepository.findById(orderRequest.getOrderId())
+                                        .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_EXIST));
+                orderEntity.setStatus(OrderStatus.valueOf(orderRequest.getStatus()).toString());
+
+                return this.orderMapper.toOrderResponse(this.orderRepository.save(orderEntity));
         }
  
 }

@@ -1,6 +1,7 @@
 package com.khanhlms.medical_store.controllers;
 
 import com.khanhlms.medical_store.dtos.orders.request.CreateOrderRequest;
+import com.khanhlms.medical_store.dtos.orders.request.UpdateStatusOrderRequest;
 import com.khanhlms.medical_store.dtos.orders.response.CreateOrderResponse;
 import com.khanhlms.medical_store.dtos.orders.response.OrderResponse;
 import com.khanhlms.medical_store.dtos.response.ApiResponse;
@@ -22,6 +23,9 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 
 @RestController
@@ -62,6 +66,15 @@ public class OrderController {
             .code(200)
             .message("Get order by user has status: " + status + " successfully!")
             .data(this.orderService.getAllOrder( status))
+            .build();
+    }
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PutMapping("/status")
+    public ApiResponse<OrderResponse> updateStatus(@RequestBody UpdateStatusOrderRequest request ) {
+        return ApiResponse.<OrderResponse>builder()
+            .code(200)
+            .message("update status to: " + request.getStatus())
+            .data(this.orderService.setOrderStatus(request))
             .build();
     }
     
