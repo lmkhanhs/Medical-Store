@@ -118,11 +118,12 @@ public class ProductCustomImpl implements ProductCustom {
                 FROM reviews
                 GROUP BY product_id
             ) r ON p.id = r.product_id
-            SET p.rating_avg = COALESCE(r.avg_rating, 0)
+            SET p.rating_avg = COALESCE(ROUND(r.avg_rating, 1), 0)
         """;
 
         em.createNativeQuery(sql).executeUpdate();
     }
+
 
 
 }
