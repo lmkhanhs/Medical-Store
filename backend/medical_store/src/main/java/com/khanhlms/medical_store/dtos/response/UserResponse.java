@@ -17,8 +17,16 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserResponse {
+    String id;
     String username;
     String email;
     Boolean isActive;
+    String fullName;
+    String phoneNumber;
+    String address;
+    String city;
+    String ward;
+    String avatarUrl;
     LocalDateTime createdAt;
+    LocalDateTime lastLogin;
 }

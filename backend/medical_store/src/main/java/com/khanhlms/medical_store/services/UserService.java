@@ -83,4 +83,12 @@ public class UserService {
     public long getUserNumber(){
         return this.userRepository.count();
     }
+    
+    public UserResponse handleChangeStatusUser(String userId){
+        UserEntity entity = this.userRepository.findById(userId).orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED));
+        if (entity.getIsActive() == true) entity.setIsActive(false);
+        else entity.setIsActive(true);
+        return this.userMapper.toResponse(this.userRepository.save(entity));
+    }
+
 }

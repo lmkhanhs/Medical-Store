@@ -84,5 +84,14 @@ public class UserController {
                 .data(this.userService.getUserNumber())
                 .build();
     }
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PutMapping("/status")
+    public ApiResponse<UserResponse> channgeUserStatus(@RequestParam String id) {
+        return ApiResponse.<UserResponse>builder()
+                .code(200)
+                .message("change status user successfully ")
+                .data(this.userService.handleChangeStatusUser(id))
+                .build();
+    }
     
 }
