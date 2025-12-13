@@ -150,10 +150,30 @@ public class OrderService {
                         .toList(); 
                 }
         }
+        @Transactional
         public OrderResponse setOrderStatus(UpdateStatusOrderRequest orderRequest){
                 OrderEntity orderEntity = this.orderRepository.findById(orderRequest.getOrderId())
                                         .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_EXIST));
                 orderEntity.setStatus(OrderStatus.valueOf(orderRequest.getStatus()).toString());
+
+                if (orderRequest.getStatus().equals(OrderStatus.CANCELLED.toString())){
+                        List<OrderItemEntity> items = orderEntity.getOrderItems();
+                        for (OrderItemEntity orderItemEntity : items) {
+                                Integer quality = orderItemEntity.getQuantity();
+                                ProductsEntity productsEntity = orderItemEntity.getProduct();
+                                productsEntity.setQuantity(quality + productsEntity.getQuantity());
+                                this.productRepository.save(productsEntity);
+                        }
+                }
+                if (orderRequest.getStatus().equals(OrderStatus.COMPLETED.toString())){
+                        List<OrderItemEntity> items = orderEntity.getOrderItems();
+                        for (OrderItemEntity orderItemEntity : items) {
+                                Integer quality = orderItemEntity.getQuantity();
+                                ProductsEntity productsEntity = orderItemEntity.getProduct();
+                                productsEntity.setSoldQuantity(quality);
+                                this.productRepository.save(productsEntity);
+                        }
+                }
 
                 return this.orderMapper.toOrderResponse(this.orderRepository.save(orderEntity));
         }
