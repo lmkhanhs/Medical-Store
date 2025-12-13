@@ -170,7 +170,7 @@ public class OrderService {
                         for (OrderItemEntity orderItemEntity : items) {
                                 Integer quality = orderItemEntity.getQuantity();
                                 ProductsEntity productsEntity = orderItemEntity.getProduct();
-                                productsEntity.setSoldQuantity(quality);
+                                productsEntity.setSoldQuantity(productsEntity.getSoldQuantity() + quality);
                                 this.productRepository.save(productsEntity);
                         }
                 }

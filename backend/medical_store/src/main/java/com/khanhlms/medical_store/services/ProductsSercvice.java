@@ -141,9 +141,7 @@ public class ProductsSercvice {
                 .toList();
     }
     public List<ProductResponse> handleFilter(Map<String, String> filters, Integer page, Integer size) {
-        return this.productRepository.filterProducts(filters, page, size).stream()
-                .map(product -> this.productsMapper.toProductResponse(product))
-                .toList();
+        return null;
     }
     public DetailProduct handlerUpdateProduct(
         String productId,
