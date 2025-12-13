@@ -238,7 +238,7 @@ public class ProductsController {
         }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @PutMapping("products/{id}")
+    @PutMapping("products/restore/{id}")
     public ApiResponse<ProductResponse> restore(@PathVariable String id) {
 
         return ApiResponse.<ProductResponse>builder()
