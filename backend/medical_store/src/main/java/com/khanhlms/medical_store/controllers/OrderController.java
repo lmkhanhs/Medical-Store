@@ -86,4 +86,13 @@ public class OrderController {
                 .data(this.orderService.countOrder())
                 .build();
     }    
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/revenues")
+    public ApiResponse<Double> getRevenue() {
+        return ApiResponse.<Double>builder()
+                        .code(200)
+                        .message("get total revenue successfully!")
+                        .data(this.orderService.getTotalRevenue())
+                        .build();
+    }
 }

@@ -158,5 +158,16 @@ public class OrderService {
         public long countOrder(){
                 return this.orderRepository.count();
         }
+
+        public double getTotalRevenue(){
+                double sum = 0;
+                List<OrderEntity> orders = this.orderRepository.findAll();
+                for (OrderEntity orderEntity : orders) {
+                        if (orderEntity.getStatus().equals(OrderStatus.COMPLETED.toString())) {
+                                sum += orderEntity.getTotalAmount();
+                        }
+                }
+                return sum;
+        }
  
 }
