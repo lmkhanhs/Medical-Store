@@ -26,7 +26,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.sql.Time;
 import java.text.ParseException;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -55,6 +57,9 @@ public class AuthenticationService {
         if (!user.getIsActive()){
             throw  new AppException(ErrorCode.USER_IS_LOOKED);
         }
+        
+        user.setLastLogin(LocalDateTime.now());
+        this.userRepository.save(user);
         return LoginResponse.builder()
                 .tokenType("Bearer")
                 .accessToken(generateToken(loginRequest.getUsername(), true))
