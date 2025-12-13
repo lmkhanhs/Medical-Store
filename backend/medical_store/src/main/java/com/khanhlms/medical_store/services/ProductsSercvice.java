@@ -201,8 +201,8 @@ public class ProductsSercvice {
         this.productRepository.save(productsEntity);
     }
 
-    public long handleGetUserNumber(){
-        return this.productRepository.count();
+    public long countActiveProducts() {
+        return productRepository.countByIsDeletedFalse();
     }
 
 }

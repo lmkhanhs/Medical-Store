@@ -13,6 +13,6 @@ import java.util.Optional;
 @Repository
 public interface ProductRepository extends JpaRepository<ProductsEntity, String>, ProductCustom {
     Optional<ProductsEntity> findByName(String name);
-
+    long countByIsDeletedFalse();
     Page<ProductsEntity> findAllByIsActiveTrueAndIsDeletedFalse(Pageable pageable);
 }

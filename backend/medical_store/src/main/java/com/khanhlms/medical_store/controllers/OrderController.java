@@ -3,6 +3,7 @@ package com.khanhlms.medical_store.controllers;
 import com.khanhlms.medical_store.dtos.orders.request.CreateOrderRequest;
 import com.khanhlms.medical_store.dtos.orders.request.UpdateStatusOrderRequest;
 import com.khanhlms.medical_store.dtos.orders.response.CreateOrderResponse;
+import com.khanhlms.medical_store.dtos.orders.response.MonthlyRevenue;
 import com.khanhlms.medical_store.dtos.orders.response.OrderResponse;
 import com.khanhlms.medical_store.dtos.response.ApiResponse;
 import com.khanhlms.medical_store.services.OrderService;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.security.access.prepost.PostAuthorize;
@@ -94,5 +96,18 @@ public class OrderController {
                         .message("get total revenue successfully!")
                         .data(this.orderService.getTotalRevenue())
                         .build();
+    }
+    @GetMapping("/revenues/months")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ApiResponse<MonthlyRevenue> getRevenueByMonthly(
+            @RequestParam(required = false) Integer year
+    ){
+        int targetYear = (year != null) ? year : LocalDate.now().getYear();
+      
+        return ApiResponse.<MonthlyRevenue>builder()
+                .code(200)
+                .message("get total revenue by month at " + targetYear)
+                .data(orderService.getTotalRevenueByMonthly(targetYear))
+                .build();
     }
 }

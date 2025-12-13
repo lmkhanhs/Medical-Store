@@ -37,8 +37,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
@@ -211,7 +209,7 @@ public class ProductsController {
         return ApiResponse.<Long>builder()
                         .code(200)
                         .message("get product number successfully")
-                        .data(this.productsSercvice.handleGetUserNumber())
+                        .data(this.productsSercvice.countActiveProducts())
                         .build();
     }
  

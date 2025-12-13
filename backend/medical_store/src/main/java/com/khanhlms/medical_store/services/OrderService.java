@@ -5,6 +5,7 @@ import com.khanhlms.medical_store.dtos.orders.request.CreateOrderRequest;
 import com.khanhlms.medical_store.dtos.orders.request.ItemOrder;
 import com.khanhlms.medical_store.dtos.orders.request.UpdateStatusOrderRequest;
 import com.khanhlms.medical_store.dtos.orders.response.CreateOrderResponse;
+import com.khanhlms.medical_store.dtos.orders.response.MonthlyRevenue;
 import com.khanhlms.medical_store.dtos.orders.response.OrderResponse;
 import com.khanhlms.medical_store.entities.*;
 import com.khanhlms.medical_store.enums.OrderStatus;
@@ -24,6 +25,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -169,5 +171,59 @@ public class OrderService {
                 }
                 return sum;
         }
+        public MonthlyRevenue getTotalRevenueByMonthly(int year) {
+
+    MonthlyRevenue result = MonthlyRevenue.builder()
+            .january(0.0)
+            .february(0.0)
+            .march(0.0)
+            .april(0.0)
+            .may(0.0)
+            .june(0.0)
+            .july(0.0)
+            .august(0.0)
+            .september(0.0)
+            .october(0.0)
+            .november(0.0)
+            .december(0.0)
+            .build();
+
+    List<OrderEntity> orders = orderRepository.findAll();
+
+    for (OrderEntity order : orders) {
+
+        // ✅ chỉ lấy đơn COMPLETED
+        if (!OrderStatus.COMPLETED.toString().equals(order.getStatus())) {
+            continue;
+        }
+
+        LocalDateTime createdAt = order.getCreatedAt();
+        if (createdAt == null || createdAt.getYear() != year) {
+            continue;
+        }
+
+        int month = createdAt.getMonthValue(); // 1 - 12
+        double amount = order.getTotalAmount();
+
+        switch (month) {
+            case 1  -> result.setJanuary(result.getJanuary() + amount);
+            case 2  -> result.setFebruary(result.getFebruary() + amount);
+            case 3  -> result.setMarch(result.getMarch() + amount);
+            case 4  -> result.setApril(result.getApril() + amount);
+            case 5  -> result.setMay(result.getMay() + amount);
+            case 6  -> result.setJune(result.getJune() + amount);
+            case 7  -> result.setJuly(result.getJuly() + amount);
+            case 8  -> result.setAugust(result.getAugust() + amount);
+            case 9  -> result.setSeptember(result.getSeptember() + amount);
+            case 10 -> result.setOctober(result.getOctober() + amount);
+            case 11 -> result.setNovember(result.getNovember() + amount);
+            case 12 -> result.setDecember(result.getDecember() + amount);
+        }
+    }
+
+    return result;
+}
+
+
  
 }
