@@ -2,13 +2,17 @@ package com.khanhlms.medical_store.controllers;
 
 import com.khanhlms.medical_store.configuration.VnPayConfig;
 import com.khanhlms.medical_store.entities.OrderEntity;
+import com.khanhlms.medical_store.entities.OrderItemEntity;
 import com.khanhlms.medical_store.entities.PaymentEntity;
+import com.khanhlms.medical_store.entities.ProductsEntity;
 import com.khanhlms.medical_store.enums.OrderStatus;
 import com.khanhlms.medical_store.enums.PaymentMethod;
 import com.khanhlms.medical_store.enums.PaymentStatus;
 import com.khanhlms.medical_store.exceptions.AppException;
 import com.khanhlms.medical_store.exceptions.ErrorCode;
 import com.khanhlms.medical_store.repositories.PaymentRepository;
+import com.khanhlms.medical_store.repositories.ProductRepository;
+import com.khanhlms.medical_store.services.ProductsSercvice;
 import com.khanhlms.medical_store.utills.HMACutill;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
@@ -34,7 +38,7 @@ import java.util.*;
 public class PaymentController {
     VnPayConfig  vnPayConfig;
     PaymentRepository paymentRepository;
-
+    ProductRepository productRepository;
     @GetMapping("/vnpay/return")
     public String VnpayReturn(HttpServletRequest request, Model model) throws UnsupportedEncodingException {
         Map<String, String> fields = new HashMap<>();
@@ -98,6 +102,15 @@ public class PaymentController {
         } else {
             orderEntity.setStatus(OrderStatus.CANCELLED.toString());
             paymentEntity.setStatus(PaymentStatus.FAILED.toString());
+
+            List<OrderItemEntity> items = orderEntity.getOrderItems();
+                        for (OrderItemEntity orderItemEntity : items) {
+                                Integer quality = orderItemEntity.getQuantity();
+                                ProductsEntity productsEntity = orderItemEntity.getProduct();
+                                productsEntity.setSoldQuantity(productsEntity.getSoldQuantity() + quality);
+                                this.productRepository.save(productsEntity);
+                        }
+
             return "payment-failed";
         }
     }
