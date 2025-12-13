@@ -1,113 +1,154 @@
 package com.khanhlms.medical_store.repositories.custom.impl;
 
-import com.khanhlms.medical_store.dtos.products.response.ProductResponse;
 import com.khanhlms.medical_store.entities.ProductsEntity;
 import com.khanhlms.medical_store.repositories.custom.ProductCustom;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @Repository
 public class ProductCustomImpl implements ProductCustom {
-    @PersistenceContext
-    private EntityManager em;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    // =========================
+    // Search by keyword
+    // =========================
     @Override
     public List<ProductsEntity> getProductsByKeyword(String keyword) {
-        String sql = """
-            SELECT * FROM products
-            WHERE LOWER(name) LIKE LOWER(CONCAT('%', :keyword, '%'))
-               OR LOWER(benefit) LIKE LOWER(CONCAT('%', :keyword, '%'))
-               AND is_active = 1
-               AND is_deleted = 0
-            ORDER BY position ASC
-            """;
 
-        Query query = em.createNativeQuery(sql, ProductsEntity.class);
+        String sql = """
+            SELECT *
+            FROM products
+            WHERE (
+                    LOWER(name) LIKE LOWER(CONCAT('%', :keyword, '%'))
+                 OR LOWER(benefit) LIKE LOWER(CONCAT('%', :keyword, '%'))
+            )
+              AND is_active = 1
+              AND is_deleted = 0
+            ORDER BY position ASC
+        """;
+
+        Query query = entityManager.createNativeQuery(sql, ProductsEntity.class);
         query.setParameter("keyword", keyword);
 
         return query.getResultList();
     }
 
+    // =========================
+    // Filter products
+    // =========================
     @Override
-    public List<ProductsEntity> filterProducts(Map<String, String> filters, Integer page, Integer size) {
-        StringBuilder sql = new StringBuilder("""
-        SELECT p.* FROM products p
-        JOIN manufacturers m ON p.manufacturer_id = m.id
-        WHERE p.is_active = 1
-          AND p.is_deleted = 0
-    """);
+    public Page<ProductsEntity> filterProducts(
+            Map<String, String> filters,
+            Pageable pageable
+    ) {
 
-        // ==========================
-        // ⚡ FILTER CONDITIONS
-        // ==========================
-        if (filters.containsKey("categoryId")) {
-            sql.append(" AND p.category_id = :categoryId");
-        }
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
-        if (filters.containsKey("manufacturerId")) {
-            sql.append(" AND p.manufacturer_id = :manufacturerId");
-        }
+        // ===== Query lấy data =====
+        CriteriaQuery<ProductsEntity> cq = cb.createQuery(ProductsEntity.class);
+        Root<ProductsEntity> root = cq.from(ProductsEntity.class);
 
-        if (filters.containsKey("origin")) {
-            sql.append(" AND LOWER(m.country) LIKE LOWER(CONCAT('%', :origin, '%'))");
-        }
+        List<Predicate> predicates = buildPredicates(filters, cb, root);
 
-        if (filters.containsKey("minPrice")) {
-            sql.append(" AND p.origin_price >= :minPrice");
-        }
+        cq.where(predicates.toArray(new Predicate[0]));
+        cq.orderBy(cb.desc(root.get("createdAt")));
 
-        if (filters.containsKey("maxPrice")) {
-            sql.append(" AND p.origin_price <= :maxPrice");
-        }
+        TypedQuery<ProductsEntity> query = entityManager.createQuery(cq);
+        query.setFirstResult((int) pageable.getOffset());
+        query.setMaxResults(pageable.getPageSize());
 
-        // ==========================
-        // 🔥 SORT
-        // ==========================
-        String sort = filters.get("sort");
-        if ("price_asc".equals(sort)) {
-            sql.append(" ORDER BY p.origin_price ASC");
-        } else if ("price_desc".equals(sort)) {
-            sql.append(" ORDER BY p.origin_price DESC");
-        } else {
-            sql.append(" ORDER BY p.position ASC"); // default sorting
-        }
+        List<ProductsEntity> resultList = query.getResultList();
 
-        // ==========================
-        // 📌 PAGINATION (page start = 0)
-        // ==========================
-        if (page == null || page < 0) page = 0;
-        if (size == null || size <= 0) size = 10;
+        // ===== Query count =====
+        CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+        Root<ProductsEntity> countRoot = countQuery.from(ProductsEntity.class);
 
-        int offset = page * size;
-        sql.append(" LIMIT :size OFFSET :offset");
+        List<Predicate> countPredicates = buildPredicates(filters, cb, countRoot);
 
-        Query query = em.createNativeQuery(sql.toString(), ProductsEntity.class);
+        countQuery.select(cb.count(countRoot))
+                .where(countPredicates.toArray(new Predicate[0]));
 
-        // ==========================
-        // 🔥 SET PARAMS
-        // ==========================
-        filters.forEach((key, value) -> {
-            switch (key) {
-                case "categoryId" -> query.setParameter("categoryId", value);
-                case "manufacturerId" -> query.setParameter("manufacturerId", value);
-                case "origin" -> query.setParameter("origin", value);
-                case "minPrice" -> query.setParameter("minPrice", Double.parseDouble(value));
-                case "maxPrice" -> query.setParameter("maxPrice", Double.parseDouble(value));
-            }
-        });
+        Long total = entityManager.createQuery(countQuery).getSingleResult();
 
-        // SET PAGING PARAMS
-        query.setParameter("size", size);
-        query.setParameter("offset", offset);
-
-        return query.getResultList();
+        return new PageImpl<>(resultList, pageable, total);
     }
 
+    // =========================
+    // Build predicates (REUSE)
+    // =========================
+    private List<Predicate> buildPredicates(
+            Map<String, String> filters,
+            CriteriaBuilder cb,
+            Root<ProductsEntity> root
+    ) {
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        // luôn loại bỏ sản phẩm đã xoá
+        predicates.add(cb.isFalse(root.get("isDeleted")));
+
+        // categoryId
+        if (filters.containsKey("categoryId") && !filters.get("categoryId").isBlank()) {
+            predicates.add(cb.equal(
+                    root.get("category").get("id"),
+                    filters.get("categoryId")
+            ));
+        }
+
+        // manufacturerId
+        if (filters.containsKey("manufacturerId") && !filters.get("manufacturerId").isBlank()) {
+            predicates.add(cb.equal(
+                    root.get("manufacturer").get("id"),
+                    filters.get("manufacturerId")
+            ));
+        }
+
+        // origin
+        if (filters.containsKey("origin") && !filters.get("origin").isBlank()) {
+            predicates.add(cb.like(
+                    cb.lower(root.get("origin")),
+                    "%" + filters.get("origin").toLowerCase() + "%"
+            ));
+        }
+
+        // minPrice
+        if (filters.containsKey("minPrice") && !filters.get("minPrice").isBlank()) {
+            Double minPrice = Double.valueOf(filters.get("minPrice"));
+            predicates.add(cb.greaterThanOrEqualTo(
+                    root.get("originPrice"), minPrice
+            ));
+        }
+
+        // maxPrice
+        if (filters.containsKey("maxPrice") && !filters.get("maxPrice").isBlank()) {
+            Double maxPrice = Double.valueOf(filters.get("maxPrice"));
+            predicates.add(cb.lessThanOrEqualTo(
+                    root.get("originPrice"), maxPrice
+            ));
+        }
+
+        return predicates;
+    }
+
+    // =========================
+    // Recalculate rating
+    // =========================
     @Override
     public void recalculateAllProductRatings() {
 
@@ -121,9 +162,6 @@ public class ProductCustomImpl implements ProductCustom {
             SET p.rating_avg = COALESCE(ROUND(r.avg_rating, 1), 0)
         """;
 
-        em.createNativeQuery(sql).executeUpdate();
+        entityManager.createNativeQuery(sql).executeUpdate();
     }
-
-
-
 }

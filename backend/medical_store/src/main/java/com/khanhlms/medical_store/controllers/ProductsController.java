@@ -39,8 +39,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
-
-
 @RestController
 @RequestMapping("${app.api.prefix}")
 @RequiredArgsConstructor
@@ -48,211 +46,215 @@ import java.util.Map;
 @Slf4j
 public class ProductsController {
 
-    ProductsSercvice productsSercvice;
-    QuestionService  questionService;
-    AnswersService answersService;
-    FrequentlyService frequentlyService;
-    DiscountService  discountService;
+        ProductsSercvice productsSercvice;
+        QuestionService questionService;
+        AnswersService answersService;
+        FrequentlyService frequentlyService;
+        DiscountService discountService;
 
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @PostMapping(value = "/products", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse<CreateProductResponse>> createProduct(
-            @ModelAttribute CreateProductRequest createProductRequest,
-            @RequestParam("ingredients") String ingredientsJson
-    ) throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        List<IngredientRequest> ingredients = mapper.readValue(
-                ingredientsJson, new TypeReference<List<IngredientRequest>>() {}
-        );
+        @PreAuthorize("hasAuthority('ADMIN')")
+        @PostMapping(value = "/products", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+        public ResponseEntity<ApiResponse<CreateProductResponse>> createProduct(
+                        @ModelAttribute CreateProductRequest createProductRequest,
+                        @RequestParam("ingredients") String ingredientsJson) throws Exception {
+                ObjectMapper mapper = new ObjectMapper();
+                List<IngredientRequest> ingredients = mapper.readValue(
+                                ingredientsJson, new TypeReference<List<IngredientRequest>>() {
+                                });
 
-        ApiResponse<CreateProductResponse> apiResponse = ApiResponse.<CreateProductResponse>builder()
-                .code(201)
-                .message("Created product successfully")
-                .data(productsSercvice.createProduct(createProductRequest, ingredients))
-                .build();
+                ApiResponse<CreateProductResponse> apiResponse = ApiResponse.<CreateProductResponse>builder()
+                                .code(201)
+                                .message("Created product successfully")
+                                .data(productsSercvice.createProduct(createProductRequest, ingredients))
+                                .build();
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
-    }
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @PutMapping(value = "/products/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponse<DetailProduct> updateProduct(
-        @ModelAttribute UpdateProductRequest updateProduct,
-        @RequestParam("ingredients") String ingredientsJson,
-        @PathVariable("id") String id
-    ) throws JsonMappingException, JsonProcessingException{
-        ObjectMapper mapper = new ObjectMapper();
-        List<IngredientRequest> ingredients = mapper.readValue(
-                ingredientsJson, new TypeReference<List<IngredientRequest>>() {}
-        );
-        return ApiResponse.<DetailProduct>builder()
-                .code(200)
-                .message("Update product successfully!")
-                .data(this.productsSercvice.handlerUpdateProduct(id, updateProduct, ingredients))
-                .build();
-    }
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @DeleteMapping("/products/{id}")
-    public ApiResponse<Void> deleteProduct(@PathVariable String id){
-        this.productsSercvice.handleDeleteProduct(id);
-        return ApiResponse.<Void>builder()
-                        .code(200)
-                        .message("delete product successfully!")
-                        .build();
-    }
-
-    @GetMapping("/products")
-    public ApiResponse<List<ProductResponse>> getProduct(
-            @RequestParam(defaultValue = "0") Integer page,
-            @RequestParam(defaultValue = "20") Integer size,
-            HttpServletRequest httpServletRequest
-    ) {
-        String uri = httpServletRequest.getRequestURI();
-        String queryString = httpServletRequest.getQueryString();
-        String cacheKey = queryString != null ? uri + "?" + queryString : uri + "&page=0&size=20";
-        log.warn("cacheKey: {}", cacheKey);
-
-        Pageable pageable = PageRequest.of(page, size);
-
-        return ApiResponse.<List<ProductResponse>>builder()
-                .message("Get product by page successfully")
-                .data(productsSercvice.handGetProduct(cacheKey, pageable))
-                .build();
-    }
-
-    @PostMapping("/products/{id}/questions")
-    public ApiResponse<QuestionResponse> createQuestion
-            (@PathVariable("id") String productId,
-             @RequestBody CreateQuestionRequest createQuestionRequest)
-    {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-
-        return ApiResponse.<QuestionResponse>builder()
-                .message("Create question successfully")
-                .data(this.questionService.handCreateQuestion(productId, username ,createQuestionRequest ))
-                .build();
-    }
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/products/{id}/questions/{id_question}/answers")
-    public ApiResponse<AnswerResponse> createAnswers(
-        @PathVariable("id") String productId,
-        @PathVariable("id_question") String questionId,
-        @RequestBody CreateAnswersRequest createAnswersRequest
-    ){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-
-        return ApiResponse.<AnswerResponse>builder()
-                .message("Create answer successfully")
-                .code(201)
-                .data(this.answersService.handCreateAnswer(productId, username,questionId,createAnswersRequest))
-                .build();
-    }
-    @GetMapping("/products/detail/{id}")
-    public ApiResponse<DetailProduct> detailProduct(@PathVariable("id") String productId) {
-        return ApiResponse.<DetailProduct>builder()
-                .code(200)
-                .message("find detail product successfully!")
-                .data(this.productsSercvice.handGetDetailProduct(productId))
-                .build();
-    }
-    @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @PostMapping("/products/{id}/frequentlys")
-    public ApiResponse<FrequentlyResponse> creareFrequently(
-            @PathVariable("id") String productId,
-            @RequestBody CreateFrequentlyRequest createFrequentlyRequest) {
-        return ApiResponse.<FrequentlyResponse>builder()
-                .code(201)
-                .message("create frequently for product is successfully!")
-                .data(this.frequentlyService.handCrateFrequently(productId, createFrequentlyRequest))
-                .build();
-    }
-
-    @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @PostMapping("/products/{id}/discounts")
-    public ApiResponse<CreateDiscountResponse> createDiscount(
-            @PathVariable("id") String productId,
-            @RequestBody CreateDiscountRequest createDiscountRequest
-    ){
-        return ApiResponse.<CreateDiscountResponse>builder()
-                .code(201)
-                .message("create discount for product is successfully!")
-                .data(this.discountService.handCreateDiscount(productId, createDiscountRequest))
-                .build();
-    }
-    @GetMapping("/products/search")
-    public ApiResponse<List<ProductResponse>> search(
-            @RequestParam(defaultValue = "") String keyword,
-            @RequestParam(defaultValue = "0") Integer page,
-            @RequestParam(defaultValue = "50") Integer size
-    ) {
-        log.warn("page: {}, size: {}, keyword {}", page, size, keyword);
-        return ApiResponse.<List<ProductResponse>>builder()
-                .code(200)
-                .message("search product by keyword successfully")
-                .data(this.productsSercvice.getByKeyword(keyword, PageRequest.of(page, size)))
-                .build();
-    }
-    @GetMapping("/products/filter")
-    public ApiResponse<List<ProductResponse>> filter(@RequestParam Map<String, String> filters,
-                                                     @RequestParam(defaultValue = "0") Integer page,
-                                                     @RequestParam(defaultValue = "50") Integer size){
-        return ApiResponse.<List<ProductResponse>>builder()
-                .code(200)
-                .message("filter product by filters successfully")
-                .data(this.productsSercvice.handleFilter(filters, page, size))
-                .build();
-    }
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/products/counts")
-    public ApiResponse<Long> getProductNumber() {
-        return ApiResponse.<Long>builder()
-                        .code(200)
-                        .message("get product number successfully")
-                        .data(this.productsSercvice.countActiveProducts())
-                        .build();
-    }
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/products/categories/counts")
-    public ApiResponse<List<CategoryProductCount>> getProductNumberByCategories() {
-        return ApiResponse.<List<CategoryProductCount>>builder()
-                        .code(200)
-                        .message("get product number by categories successfully")
-                        .data(this.productsSercvice.getProductCountByCategory())
-                        .build();
-    }   
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/products/deleted")
-    public ApiResponse<List<ProductResponse>> getDeletedProducts(Pageable pageable) {
-
-        return ApiResponse.<List<ProductResponse>>builder()
-                .code(200)
-                .message("get deleted products successfully")
-                .data(productsSercvice.getProductDeleted(pageable))
-                .build();
+                return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
         }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @PutMapping("products/restore/{id}")
-    public ApiResponse<ProductResponse> restore(@PathVariable String id) {
+        @PreAuthorize("hasAuthority('ADMIN')")
+        @PutMapping(value = "/products/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+        public ApiResponse<DetailProduct> updateProduct(
+                        @ModelAttribute UpdateProductRequest updateProduct,
+                        @RequestParam("ingredients") String ingredientsJson,
+                        @PathVariable("id") String id) throws JsonMappingException, JsonProcessingException {
+                ObjectMapper mapper = new ObjectMapper();
+                List<IngredientRequest> ingredients = mapper.readValue(
+                                ingredientsJson, new TypeReference<List<IngredientRequest>>() {
+                                });
+                return ApiResponse.<DetailProduct>builder()
+                                .code(200)
+                                .message("Update product successfully!")
+                                .data(this.productsSercvice.handlerUpdateProduct(id, updateProduct, ingredients))
+                                .build();
+        }
 
-        return ApiResponse.<ProductResponse>builder()
-                .code(200)
-                .message("restore products successfully" )
-                .data(productsSercvice.handleRestore(id))
-                .build();
+        @PreAuthorize("hasAuthority('ADMIN')")
+        @DeleteMapping("/products/{id}")
+        public ApiResponse<Void> deleteProduct(@PathVariable String id) {
+                this.productsSercvice.handleDeleteProduct(id);
+                return ApiResponse.<Void>builder()
+                                .code(200)
+                                .message("delete product successfully!")
+                                .build();
+        }
+
+        @GetMapping("/products")
+        public ApiResponse<List<ProductResponse>> getProduct(
+                        @RequestParam(defaultValue = "0") Integer page,
+                        @RequestParam(defaultValue = "20") Integer size,
+                        HttpServletRequest httpServletRequest) {
+                String uri = httpServletRequest.getRequestURI();
+                String queryString = httpServletRequest.getQueryString();
+                String cacheKey = queryString != null ? uri + "?" + queryString : uri + "&page=0&size=20";
+                log.warn("cacheKey: {}", cacheKey);
+
+                Pageable pageable = PageRequest.of(page, size);
+
+                return ApiResponse.<List<ProductResponse>>builder()
+                                .message("Get product by page successfully")
+                                .data(productsSercvice.handGetProduct(cacheKey, pageable))
+                                .build();
+        }
+
+        @PostMapping("/products/{id}/questions")
+        public ApiResponse<QuestionResponse> createQuestion(@PathVariable("id") String productId,
+                        @RequestBody CreateQuestionRequest createQuestionRequest) {
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                String username = authentication.getName();
+
+                return ApiResponse.<QuestionResponse>builder()
+                                .message("Create question successfully")
+                                .data(this.questionService.handCreateQuestion(productId, username,
+                                                createQuestionRequest))
+                                .build();
+        }
+
+        @ResponseStatus(HttpStatus.CREATED)
+        @PostMapping("/products/{id}/questions/{id_question}/answers")
+        public ApiResponse<AnswerResponse> createAnswers(
+                        @PathVariable("id") String productId,
+                        @PathVariable("id_question") String questionId,
+                        @RequestBody CreateAnswersRequest createAnswersRequest) {
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                String username = authentication.getName();
+
+                return ApiResponse.<AnswerResponse>builder()
+                                .message("Create answer successfully")
+                                .code(201)
+                                .data(this.answersService.handCreateAnswer(productId, username, questionId,
+                                                createAnswersRequest))
+                                .build();
+        }
+
+        @GetMapping("/products/detail/{id}")
+        public ApiResponse<DetailProduct> detailProduct(@PathVariable("id") String productId) {
+                return ApiResponse.<DetailProduct>builder()
+                                .code(200)
+                                .message("find detail product successfully!")
+                                .data(this.productsSercvice.handGetDetailProduct(productId))
+                                .build();
+        }
+
+        @ResponseStatus(HttpStatus.CREATED)
+        @PreAuthorize("hasAuthority('ADMIN')")
+        @PostMapping("/products/{id}/frequentlys")
+        public ApiResponse<FrequentlyResponse> creareFrequently(
+                        @PathVariable("id") String productId,
+                        @RequestBody CreateFrequentlyRequest createFrequentlyRequest) {
+                return ApiResponse.<FrequentlyResponse>builder()
+                                .code(201)
+                                .message("create frequently for product is successfully!")
+                                .data(this.frequentlyService.handCrateFrequently(productId, createFrequentlyRequest))
+                                .build();
+        }
+
+        @ResponseStatus(HttpStatus.CREATED)
+        @PreAuthorize("hasAuthority('ADMIN')")
+        @PostMapping("/products/{id}/discounts")
+        public ApiResponse<CreateDiscountResponse> createDiscount(
+                        @PathVariable("id") String productId,
+                        @RequestBody CreateDiscountRequest createDiscountRequest) {
+                return ApiResponse.<CreateDiscountResponse>builder()
+                                .code(201)
+                                .message("create discount for product is successfully!")
+                                .data(this.discountService.handCreateDiscount(productId, createDiscountRequest))
+                                .build();
+        }
+
+        @GetMapping("/products/search")
+        public ApiResponse<List<ProductResponse>> search(
+                        @RequestParam(defaultValue = "") String keyword,
+                        @RequestParam(defaultValue = "0") Integer page,
+                        @RequestParam(defaultValue = "50") Integer size) {
+                log.warn("page: {}, size: {}, keyword {}", page, size, keyword);
+                return ApiResponse.<List<ProductResponse>>builder()
+                                .code(200)
+                                .message("search product by keyword successfully")
+                                .data(this.productsSercvice.getByKeyword(keyword, PageRequest.of(page, size)))
+                                .build();
+        }
+
+        @GetMapping("/products/filter")
+        public ApiResponse<List<ProductResponse>> filterProducts(
+                        @RequestParam Map<String, String> filters,
+                        @RequestParam(defaultValue = "0") Integer page,
+                        @RequestParam(defaultValue = "20") Integer size) {
+                return ApiResponse.<List<ProductResponse>>builder()
+                                .code(200)
+                                .message("filter products")
+                                .data(productsSercvice.handleFilter(filters, page, size))
+                                .build();
+        }
+
+        @PreAuthorize("hasAuthority('ADMIN')")
+        @GetMapping("/products/counts")
+        public ApiResponse<Long> getProductNumber() {
+                return ApiResponse.<Long>builder()
+                                .code(200)
+                                .message("get product number successfully")
+                                .data(this.productsSercvice.countActiveProducts())
+                                .build();
+        }
+
+        @PreAuthorize("hasAuthority('ADMIN')")
+        @GetMapping("/products/categories/counts")
+        public ApiResponse<List<CategoryProductCount>> getProductNumberByCategories() {
+                return ApiResponse.<List<CategoryProductCount>>builder()
+                                .code(200)
+                                .message("get product number by categories successfully")
+                                .data(this.productsSercvice.getProductCountByCategory())
+                                .build();
+        }
+
+        @PreAuthorize("hasAuthority('ADMIN')")
+        @GetMapping("/products/deleted")
+        public ApiResponse<List<ProductResponse>> getDeletedProducts(Pageable pageable) {
+
+                return ApiResponse.<List<ProductResponse>>builder()
+                                .code(200)
+                                .message("get deleted products successfully")
+                                .data(productsSercvice.getProductDeleted(pageable))
+                                .build();
+        }
+
+        @PreAuthorize("hasAuthority('ADMIN')")
+        @PutMapping("products/restore/{id}")
+        public ApiResponse<ProductResponse> restore(@PathVariable String id) {
+
+                return ApiResponse.<ProductResponse>builder()
+                                .code(200)
+                                .message("restore products successfully")
+                                .data(productsSercvice.handleRestore(id))
+                                .build();
         }
 
         @GetMapping("/products/top-selling")
         public ApiResponse<List<ProductResponse>> getTopSellingProducts() {
-        return ApiResponse.<List<ProductResponse>>builder()
-                .code(200)
-                .message("get top 10 best selling products")
-                .data(productsSercvice.getTop10BestSellingProducts())
-                .build();
+                return ApiResponse.<List<ProductResponse>>builder()
+                                .code(200)
+                                .message("get top 10 best selling products")
+                                .data(productsSercvice.getTop10BestSellingProducts())
+                                .build();
         }
 
- 
 }

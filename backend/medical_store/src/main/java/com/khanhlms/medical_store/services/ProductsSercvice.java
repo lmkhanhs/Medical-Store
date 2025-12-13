@@ -24,6 +24,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -140,9 +141,7 @@ public class ProductsSercvice {
                 .map(product -> this.productsMapper.toProductResponse(product))
                 .toList();
     }
-    public List<ProductResponse> handleFilter(Map<String, String> filters, Integer page, Integer size) {
-        return null;
-    }
+    
     public DetailProduct handlerUpdateProduct(
         String productId,
         UpdateProductRequest request,
@@ -246,6 +245,27 @@ public class ProductsSercvice {
             .stream()
             .map(productsMapper::toProductResponse)
             .toList();
+    }
+
+
+    public List<ProductResponse> handleFilter(
+        Map<String, String> filters,
+        Integer page,
+        Integer size
+    ) {
+
+        int pageNumber = (page != null && page >= 0) ? page : 0;
+        int pageSize = (size != null && size > 0) ? size : 20;
+
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+
+        Page<ProductsEntity> pageResult =
+                productRepository.filterProducts(filters, pageable);
+
+        return pageResult.getContent()
+                .stream()
+                .map(productsMapper::toProductResponse)
+                .toList();
     }
 
 
