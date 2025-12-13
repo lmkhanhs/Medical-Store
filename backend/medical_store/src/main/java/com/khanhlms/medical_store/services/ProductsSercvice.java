@@ -206,8 +206,28 @@ public class ProductsSercvice {
         return productRepository.countByIsDeletedFalse();
     }
     public List<CategoryProductCount> getProductCountByCategory() {
-        return productRepository.countProductsByCategory();
-    }
+
+    // 1️⃣ Lấy dữ liệu từ DB (chưa có percentage)
+    List<CategoryProductCount> data = productRepository.countProductsByCategory();
+
+    // 2️⃣ Tính tổng số sản phẩm (chưa xoá)
+    long total = data.stream()
+            .mapToLong(CategoryProductCount::getProductCount)
+            .sum();
+
+    // 3️⃣ Tính percentage cho từng category
+    data.forEach(item -> {
+        double percentage = total == 0
+                ? 0
+                : (item.getProductCount() * 100.0 / total);
+
+        // làm tròn 2 chữ số thập phân
+        item.setPercentage(Math.round(percentage * 100.0) / 100.0);
+    });
+
+    return data;
+}
+
 
 
 }
