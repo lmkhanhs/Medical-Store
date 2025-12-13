@@ -187,7 +187,7 @@ public class ProductsSercvice {
         return productsMapper.toDetailProduct(productRepository.save(product));
     }   
     
-    @Scheduled(fixedRate = 1 * 60 * 1000) // 2 phút
+    @Scheduled(fixedRate = 1 * 60 * 1000) // 1 phút
     @Transactional
     public void updateAvgStrat(){
         log.info("🔄 Start recalculating product ratings...");
@@ -199,6 +199,10 @@ public class ProductsSercvice {
                             
         productsEntity.setIsDeleted(true);
         this.productRepository.save(productsEntity);
+    }
+
+    public long handleGetUserNumber(){
+        return this.productRepository.count();
     }
 
 }

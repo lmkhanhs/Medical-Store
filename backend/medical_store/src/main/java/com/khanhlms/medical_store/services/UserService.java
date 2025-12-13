@@ -1,10 +1,16 @@
 package com.khanhlms.medical_store.services;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.khanhlms.medical_store.dtos.requests.CreateUserRequest;
 import com.khanhlms.medical_store.dtos.response.UserResponse;
 import com.khanhlms.medical_store.dtos.users.requests.ChangeProfileRequest;
 import com.khanhlms.medical_store.dtos.users.response.ProfileResponse;
-import com.khanhlms.medical_store.entities.ProductsEntity;
 import com.khanhlms.medical_store.entities.RoleEntity;
 import com.khanhlms.medical_store.entities.UserEntity;
 import com.khanhlms.medical_store.enums.RoleEnums;
@@ -14,16 +20,10 @@ import com.khanhlms.medical_store.mapper.UserMapper;
 import com.khanhlms.medical_store.repositories.RoleRepository;
 import com.khanhlms.medical_store.repositories.UserRepository;
 import com.khanhlms.medical_store.utills.ReflexUtills;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -79,5 +79,8 @@ public class UserService {
         UserEntity userEntity = this.userRepository.findByUsername(username).get();
         ReflexUtills.mergeNonNullFields(userEntity, updateUser);
         return userMapper.toProfileResponse(userRepository.save(updateUser));
+    }
+    public long getUserNumber(){
+        return this.userRepository.count();
     }
 }

@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.awt.*;
 import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 @RestController
@@ -72,5 +75,14 @@ public class UserController {
                 .data(this.userService.handChangeProfile(username, changeProfileRequest))
                 .build();
     }
-
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/count")
+    public ApiResponse<Long> getUserNumber() {
+        return ApiResponse.<Long>builder()
+                .code(200)
+                .message("get user number successfully!")
+                .data(this.userService.getUserNumber())
+                .build();
+    }
+    
 }

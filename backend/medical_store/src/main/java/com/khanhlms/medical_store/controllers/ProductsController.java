@@ -37,6 +37,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping("${app.api.prefix}")
@@ -202,5 +205,13 @@ public class ProductsController {
                 .data(this.productsSercvice.handleFilter(filters, page, size))
                 .build();
     }
-
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/products/counts")
+    public ApiResponse<Long> getProductNumber() {
+        return ApiResponse.<Long>builder()
+                        .code(200)
+                        .message("get product number successfully")
+                        .data(this.productsSercvice.handleGetUserNumber())
+                        .build();
+    }
 }
