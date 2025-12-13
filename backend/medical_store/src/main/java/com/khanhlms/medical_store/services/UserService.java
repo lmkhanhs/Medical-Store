@@ -86,6 +86,10 @@ public class UserService {
     
     public UserResponse handleChangeStatusUser(String userId){
         UserEntity entity = this.userRepository.findById(userId).orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED));
+        RoleEntity roleADMIN = this.roleRepository.findByName(RoleEnums.ADMIN.toString()).get();
+        if ( entity.getRoles().contains(roleADMIN) ) {
+            throw new AppException(ErrorCode.INVALID_REQUEST);
+        }
         if (entity.getIsActive() == true) entity.setIsActive(false);
         else entity.setIsActive(true);
         return this.userMapper.toResponse(this.userRepository.save(entity));
