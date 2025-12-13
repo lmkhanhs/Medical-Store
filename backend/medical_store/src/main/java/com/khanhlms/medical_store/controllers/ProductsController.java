@@ -38,9 +38,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PathVariable;
 
 
 
@@ -247,5 +244,15 @@ public class ProductsController {
                 .data(productsSercvice.handleRestore(id))
                 .build();
         }
+
+        @GetMapping("/products/top-selling")
+        public ApiResponse<List<ProductResponse>> getTopSellingProducts() {
+        return ApiResponse.<List<ProductResponse>>builder()
+                .code(200)
+                .message("get top 10 best selling products")
+                .data(productsSercvice.getTop10BestSellingProducts())
+                .build();
+        }
+
  
 }

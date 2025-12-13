@@ -241,6 +241,14 @@ public class ProductsSercvice {
             .orElseThrow(()-> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
         product.setIsDeleted(false);
         return this.productsMapper.toProductResponse(this.productRepository.save(product));
+    }   
+    public List<ProductResponse> getTop10BestSellingProducts() {
+    return productRepository
+            .findTop10ByIsDeletedFalseAndIsActiveTrueOrderBySoldQuantityDesc()
+            .stream()
+            .map(productsMapper::toProductResponse)
+            .toList();
     }
+
 
 }

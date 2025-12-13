@@ -34,5 +34,6 @@ public interface ProductRepository extends JpaRepository<ProductsEntity, String>
     """)
     List<CategoryProductCount> countProductsByCategory();
     Page<ProductsEntity> findAllByIsDeletedTrue(Pageable pageable);
+    List<ProductsEntity> findTop10ByIsDeletedFalseAndIsActiveTrueOrderBySoldQuantityDesc();
 
 }
