@@ -88,7 +88,7 @@ public class ProductsController {
                 .build();
     }
     @PreAuthorize("hasAuthority('ADMIN')")
-    @DeleteMapping("/product/{id}")
+    @DeleteMapping("/products/{id}")
     public ApiResponse<Void> deleteProduct(@PathVariable String id){
         this.productsSercvice.handleDeleteProduct(id);
         return ApiResponse.<Void>builder()

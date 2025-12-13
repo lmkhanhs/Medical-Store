@@ -155,5 +155,8 @@ public class OrderService {
 
                 return this.orderMapper.toOrderResponse(this.orderRepository.save(orderEntity));
         }
+        public long countOrder(){
+                return this.orderRepository.count();
+        }
  
 }

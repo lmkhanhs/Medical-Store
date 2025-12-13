@@ -77,5 +77,13 @@ public class OrderController {
             .data(this.orderService.setOrderStatus(request))
             .build();
     }
-    
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/count")
+    public ApiResponse<Long> countOrrder() {
+        return ApiResponse.<Long>builder()
+                .code(200)
+                .message("get number order successfully")
+                .data(this.orderService.countOrder())
+                .build();
+    }    
 }
