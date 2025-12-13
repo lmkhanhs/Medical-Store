@@ -33,5 +33,6 @@ public interface ProductRepository extends JpaRepository<ProductsEntity, String>
     GROUP BY c.id, c.name
     """)
     List<CategoryProductCount> countProductsByCategory();
+    Page<ProductsEntity> findAllByIsDeletedTrue(Pageable pageable);
 
 }

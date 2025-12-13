@@ -38,6 +38,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 
 @RestController
@@ -221,6 +225,27 @@ public class ProductsController {
                         .message("get product number by categories successfully")
                         .data(this.productsSercvice.getProductCountByCategory())
                         .build();
-    }
+    }   
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/products/deleted")
+    public ApiResponse<List<ProductResponse>> getDeletedProducts(Pageable pageable) {
+
+        return ApiResponse.<List<ProductResponse>>builder()
+                .code(200)
+                .message("get deleted products successfully")
+                .data(productsSercvice.getProductDeleted(pageable))
+                .build();
+        }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PutMapping("products/{id}")
+    public ApiResponse<ProductResponse> restore(@PathVariable String id) {
+
+        return ApiResponse.<ProductResponse>builder()
+                .code(200)
+                .message("restore products successfully" )
+                .data(productsSercvice.handleRestore(id))
+                .build();
+        }
  
 }

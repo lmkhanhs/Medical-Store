@@ -23,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -226,8 +227,20 @@ public class ProductsSercvice {
     });
 
     return data;
-}
+    }
 
-
+   public List<ProductResponse> getProductDeleted(Pageable pageable) {
+    return productRepository.findAllByIsDeletedTrue(pageable)
+            .getContent() // 🔥 Page -> List
+            .stream()
+            .map(productsMapper::toProductResponse)
+            .toList();
+    }
+    public ProductResponse handleRestore(String productID){
+        ProductsEntity product = this.productRepository.findById(productID)
+            .orElseThrow(()-> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+        product.setIsDeleted(false);
+        return this.productsMapper.toProductResponse(this.productRepository.save(product));
+    }
 
 }
