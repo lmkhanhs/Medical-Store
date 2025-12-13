@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.khanhlms.medical_store.dtos.products.requests.CreateProductRequest;
 import com.khanhlms.medical_store.dtos.products.requests.IngredientRequest;
 import com.khanhlms.medical_store.dtos.products.requests.UpdateProductRequest;
+import com.khanhlms.medical_store.dtos.products.response.CategoryProductCount;
 import com.khanhlms.medical_store.dtos.products.response.CreateProductResponse;
 import com.khanhlms.medical_store.dtos.products.response.DetailProduct;
 import com.khanhlms.medical_store.dtos.products.response.ProductResponse;
@@ -204,5 +205,9 @@ public class ProductsSercvice {
     public long countActiveProducts() {
         return productRepository.countByIsDeletedFalse();
     }
+    public List<CategoryProductCount> getProductCountByCategory() {
+        return productRepository.countProductsByCategory();
+    }
+
 
 }

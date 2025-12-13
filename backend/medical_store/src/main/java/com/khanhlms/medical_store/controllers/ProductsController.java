@@ -13,6 +13,7 @@ import com.khanhlms.medical_store.dtos.frequently.response.FrequentlyResponse;
 import com.khanhlms.medical_store.dtos.products.requests.CreateProductRequest;
 import com.khanhlms.medical_store.dtos.products.requests.IngredientRequest;
 import com.khanhlms.medical_store.dtos.products.requests.UpdateProductRequest;
+import com.khanhlms.medical_store.dtos.products.response.CategoryProductCount;
 import com.khanhlms.medical_store.dtos.products.response.CreateProductResponse;
 import com.khanhlms.medical_store.dtos.products.response.DetailProduct;
 import com.khanhlms.medical_store.dtos.products.response.ProductResponse;
@@ -210,6 +211,15 @@ public class ProductsController {
                         .code(200)
                         .message("get product number successfully")
                         .data(this.productsSercvice.countActiveProducts())
+                        .build();
+    }
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/products/categories/counts")
+    public ApiResponse<List<CategoryProductCount>> getProductNumberByCategories() {
+        return ApiResponse.<List<CategoryProductCount>>builder()
+                        .code(200)
+                        .message("get product number by categories successfully")
+                        .data(this.productsSercvice.getProductCountByCategory())
                         .build();
     }
  
