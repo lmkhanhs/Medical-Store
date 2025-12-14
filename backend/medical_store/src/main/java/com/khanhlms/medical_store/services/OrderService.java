@@ -45,6 +45,13 @@ public class OrderService {
     public CreateOrderResponse createOrder(HttpServletRequest httpServletRequest, String username, CreateOrderRequest request) {
         
         List<ItemOrder> itemOrders = request.getItemOrders();
+        for (ItemOrder itemOrder : itemOrders) {
+                String productId = itemOrder.getProductId();
+                ProductsEntity entity = this.productRepository.findById(productId).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+                if (entity.getIsDeleted() == true){
+                        throw new AppException(ErrorCode.PRODUCT_IS_DELETED);
+                }
+        }
         List<OrderItemEntity> orderItems = new LinkedList<>();
         
         Double totalAmount = 0.0 ;

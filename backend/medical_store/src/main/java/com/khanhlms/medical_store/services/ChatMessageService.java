@@ -16,7 +16,6 @@ public class ChatMessageService {
 
     private final ChatMessageRepository chatMessageRepository;
 
-    // lưu tin nhắn
     public ChatMessageEntity saveMessage(
             String sender,
             String receiver,
@@ -43,4 +42,6 @@ public class ChatMessageService {
                         sender, receiver
                 );
     }
+
+    
 }
