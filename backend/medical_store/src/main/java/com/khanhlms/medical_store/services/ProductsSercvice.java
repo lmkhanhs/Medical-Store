@@ -40,10 +40,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ProductsSercvice {
     ProductRepository productRepository;
-    ProductsMapper  productsMapper;
+    ProductsMapper productsMapper;
     BaseRedisUtils redisUtils;
-    private ObjectMapper objectMapper = new  ObjectMapper();
-    public CreateProductResponse createProduct(CreateProductRequest request, List<IngredientRequest>  ingredients) {
+    private ObjectMapper objectMapper = new ObjectMapper();
+
+    public CreateProductResponse createProduct(CreateProductRequest request, List<IngredientRequest> ingredients) {
         ProductsEntity productsEntity = this.productsMapper.toEntity(request);
         Date productDate = productsEntity.getProductDate();
         Date expirationDate = productsEntity.getExpirationDate();
@@ -55,7 +56,7 @@ public class ProductsSercvice {
         productsEntity.setIsDeleted(false);
         productsEntity.setRatingAvg(0.0);
         productsEntity.setSoldQuantity(0);
-        productsEntity.setPosition((int)this.productRepository.count());
+        productsEntity.setPosition((int) this.productRepository.count());
         if (productsEntity.getImages() != null) {
             productsEntity.getImages().forEach(img -> img.setProduct(productsEntity));
         }
@@ -66,63 +67,63 @@ public class ProductsSercvice {
         return this.productsMapper.toCreateProductResponse(productRepository.save(productsEntity));
     }
 
-    // private List<IngredientEntity> mapIngredientEntity(List<IngredientRequest> ingredientRequests){
-    //     if (ingredientRequests == null || ingredientRequests.isEmpty()) {return Collections.emptyList();}
-    //     return ingredientRequests.stream()
-    //             .map(ingredientRequest -> {
-    //                 return  IngredientEntity.builder()
-    //                         .name(ingredientRequest.getName())
-    //                         .description(ingredientRequest.getDescription())
-    //                         .amount(ingredientRequest.getAmount())
-    //                         .unit(ingredientRequest.getUnit())
-    //                         .build();
-    //             })
-    //             .toList();
+    // private List<IngredientEntity> mapIngredientEntity(List<IngredientRequest>
+    // ingredientRequests){
+    // if (ingredientRequests == null || ingredientRequests.isEmpty()) {return
+    // Collections.emptyList();}
+    // return ingredientRequests.stream()
+    // .map(ingredientRequest -> {
+    // return IngredientEntity.builder()
+    // .name(ingredientRequest.getName())
+    // .description(ingredientRequest.getDescription())
+    // .amount(ingredientRequest.getAmount())
+    // .unit(ingredientRequest.getUnit())
+    // .build();
+    // })
+    // .toList();
     // }
     private List<IngredientEntity> mapIngredientEntity(List<IngredientRequest> ingredientRequests) {
-    if (ingredientRequests == null || ingredientRequests.isEmpty()) {
-        return new ArrayList<>();
+        if (ingredientRequests == null || ingredientRequests.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return ingredientRequests.stream()
+                .map(req -> IngredientEntity.builder()
+                        .name(req.getName())
+                        .description(req.getDescription())
+                        .amount(req.getAmount())
+                        .unit(req.getUnit())
+                        .build())
+                .collect(Collectors.toCollection(ArrayList::new)); // ✅ MUTABLE
     }
 
-    return ingredientRequests.stream()
-            .map(req -> IngredientEntity.builder()
-                    .name(req.getName())
-                    .description(req.getDescription())
-                    .amount(req.getAmount())
-                    .unit(req.getUnit())
-                    .build())
-            .collect(Collectors.toCollection(ArrayList::new)); // ✅ MUTABLE
-}
-
-
-    public List<ProductResponse> handGetProduct( String redisKey,Pageable pageable) {
+    public List<ProductResponse> handGetProduct(String redisKey, Pageable pageable) {
         List<ProductResponse> result = null;
-        if(Objects.isNull(this.redisUtils.getForString(redisKey))) {
-             result = this.productRepository.findAllByIsActiveTrueAndIsDeletedFalse(pageable)
+        if (Objects.isNull(this.redisUtils.getForString(redisKey))) {
+            result = this.productRepository.findAllByIsActiveTrueAndIsDeletedFalse(pageable)
                     .stream()
                     .map(item -> this.productsMapper.toProductResponse(item))
                     .toList();
             try {
                 String valueString = this.objectMapper.writeValueAsString(result);
-                this.redisUtils.set(redisKey,valueString, 1l,  TimeUnit.SECONDS);
+                this.redisUtils.set(redisKey, valueString, 1l, TimeUnit.SECONDS);
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }
-        }
-        else {
+        } else {
             String dataRedis = (String) this.redisUtils.getForString(redisKey);
             try {
                 // convert JSON string to List<ProductResponse>
                 result = objectMapper.readValue(
                         dataRedis,
-                        objectMapper.getTypeFactory().constructCollectionType(List.class, ProductResponse.class)
-                );
+                        objectMapper.getTypeFactory().constructCollectionType(List.class, ProductResponse.class));
             } catch (JsonProcessingException e) {
                 throw new RuntimeException("Error parsing product list from Redis", e);
             }
         }
         return result;
     }
+
     public DetailProduct handGetDetailProduct(String productId) {
         ProductsEntity product = this.productRepository.findById(productId)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
@@ -132,70 +133,72 @@ public class ProductsSercvice {
             percentage = product.getDiscount().getPercent();
         }
         result.setDiscountPercen(percentage);
-        result.setDiscountPrice(result.getOriginPrice() * (100 - percentage ) / 100);
+        result.setDiscountPrice(result.getOriginPrice() * (100 - percentage) / 100);
         return result;
     }
+
     public List<ProductResponse> getByKeyword(String keyword, Pageable pageable) {
-        if (keyword.equals("")) return Collections.emptyList();
+        if (keyword.equals(""))
+            return Collections.emptyList();
         return this.productRepository.getProductsByKeyword(keyword).stream()
                 .map(product -> this.productsMapper.toProductResponse(product))
                 .toList();
     }
-    
+
     public DetailProduct handlerUpdateProduct(
-        String productId,
-        UpdateProductRequest request,
-        List<IngredientRequest> ingredients
-    ) {
+            String productId,
+            UpdateProductRequest request,
+            List<IngredientRequest> ingredients) {
 
-    ProductsEntity product = productRepository.findById(productId)
-            .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+        ProductsEntity product = productRepository.findById(productId)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 
-    // check duplicate name
-    if (request.getName() != null) {
-        productRepository.findByName(request.getName())
-                .filter(p -> !p.getId().equals(productId))
-                .ifPresent(p -> {
-                    throw new AppException(ErrorCode.PRODUCT_EXISTED);
-                });
-    }
-
-    // check date
-    if (request.getProductDate() != null && request.getExpirationDate() != null) {
-        if (request.getProductDate().after(request.getExpirationDate())) {
-            throw new AppException(ErrorCode.EXPIRERATION_EXCEPTION);
+        // check duplicate name
+        if (request.getName() != null) {
+            productRepository.findByName(request.getName())
+                    .filter(p -> !p.getId().equals(productId))
+                    .ifPresent(p -> {
+                        throw new AppException(ErrorCode.PRODUCT_EXISTED);
+                    });
         }
-    }
 
-    // 🔥 UPDATE FIELD
-    productsMapper.updateEntity(product, request);
+        // check date
+        if (request.getProductDate() != null && request.getExpirationDate() != null) {
+            if (request.getProductDate().after(request.getExpirationDate())) {
+                throw new AppException(ErrorCode.EXPIRERATION_EXCEPTION);
+            }
+        }
 
-    // 🔥 UPDATE INGREDIENTS
-    if (ingredients != null) {
-        product.getIngredients().clear();
-        List<IngredientEntity> newIngredients = mapIngredientEntity(ingredients);
-        newIngredients.forEach(i -> i.setProduct(product));
-        product.getIngredients().addAll(newIngredients);
-    }
+        // 🔥 UPDATE FIELD
+        productsMapper.updateEntity(product, request);
 
-    // images
-    if (product.getImages() != null) {
-        product.getImages().forEach(img -> img.setProduct(product));
-    }
+        // 🔥 UPDATE INGREDIENTS
+        if (ingredients != null) {
+            product.getIngredients().clear();
+            List<IngredientEntity> newIngredients = mapIngredientEntity(ingredients);
+            newIngredients.forEach(i -> i.setProduct(product));
+            product.getIngredients().addAll(newIngredients);
+        }
+
+        // images
+        if (product.getImages() != null) {
+            product.getImages().forEach(img -> img.setProduct(product));
+        }
 
         return productsMapper.toDetailProduct(productRepository.save(product));
-    }   
-    
+    }
+
     @Scheduled(fixedRate = 1 * 60 * 1000) // 1 phút
     @Transactional
-    public void updateAvgStrat(){
+    public void updateAvgStrat() {
         log.info("🔄 Start recalculating product ratings...");
         this.productRepository.recalculateAllProductRatings();
     }
-    public void handleDeleteProduct(String id){
-        ProductsEntity productsEntity =  this.productRepository.findById(id)
-                                        .orElseThrow(()-> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
-                            
+
+    public void handleDeleteProduct(String id) {
+        ProductsEntity productsEntity = this.productRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+
         productsEntity.setIsDeleted(true);
         this.productRepository.save(productsEntity);
     }
@@ -203,70 +206,181 @@ public class ProductsSercvice {
     public long countActiveProducts() {
         return productRepository.countByIsDeletedFalse();
     }
+
     public List<CategoryProductCount> getProductCountByCategory() {
 
-    // 1️⃣ Lấy dữ liệu từ DB (chưa có percentage)
-    List<CategoryProductCount> data = productRepository.countProductsByCategory();
+        // 1️⃣ Lấy dữ liệu từ DB (chưa có percentage)
+        List<CategoryProductCount> data = productRepository.countProductsByCategory();
 
-    // 2️⃣ Tính tổng số sản phẩm (chưa xoá)
-    long total = data.stream()
-            .mapToLong(CategoryProductCount::getProductCount)
-            .sum();
+        // 2️⃣ Tính tổng số sản phẩm (chưa xoá)
+        long total = data.stream()
+                .mapToLong(CategoryProductCount::getProductCount)
+                .sum();
 
-    // 3️⃣ Tính percentage cho từng category
-    data.forEach(item -> {
-        double percentage = total == 0
-                ? 0
-                : (item.getProductCount() * 100.0 / total);
+        // 3️⃣ Tính percentage cho từng category
+        data.forEach(item -> {
+            double percentage = total == 0
+                    ? 0
+                    : (item.getProductCount() * 100.0 / total);
 
-        // làm tròn 2 chữ số thập phân
-        item.setPercentage(Math.round(percentage * 100.0) / 100.0);
-    });
+            // làm tròn 2 chữ số thập phân
+            item.setPercentage(Math.round(percentage * 100.0) / 100.0);
+        });
 
-    return data;
+        return data;
     }
 
-   public List<ProductResponse> getProductDeleted(Pageable pageable) {
-    return productRepository.findAllByIsDeletedTrue(pageable)
-            .getContent() // 🔥 Page -> List
-            .stream()
-            .map(productsMapper::toProductResponse)
-            .toList();
-    }
-    public ProductResponse handleRestore(String productID){
-        ProductsEntity product = this.productRepository.findById(productID)
-            .orElseThrow(()-> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
-        product.setIsDeleted(false);
-        return this.productsMapper.toProductResponse(this.productRepository.save(product));
-    }   
-    public List<ProductResponse> getTop10BestSellingProducts() {
-    return productRepository
-            .findTop10ByIsDeletedFalseAndIsActiveTrueOrderBySoldQuantityDesc()
-            .stream()
-            .map(productsMapper::toProductResponse)
-            .toList();
-    }
-
-
-    public List<ProductResponse> handleFilter(
-        Map<String, String> filters,
-        Integer page,
-        Integer size
-    ) {
-
-        int pageNumber = (page != null && page >= 0) ? page : 0;
-        int pageSize = (size != null && size > 0) ? size : 20;
-
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-
-        Page<ProductsEntity> pageResult =
-                productRepository.filterProducts(filters, pageable);
-
-        return pageResult.getContent()
+    public List<ProductResponse> getProductDeleted(Pageable pageable) {
+        return productRepository.findAllByIsDeletedTrue(pageable)
+                .getContent() // 🔥 Page -> List
                 .stream()
                 .map(productsMapper::toProductResponse)
                 .toList();
     }
 
+    public ProductResponse handleRestore(String productID) {
+        ProductsEntity product = this.productRepository.findById(productID)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+        product.setIsDeleted(false);
+        return this.productsMapper.toProductResponse(this.productRepository.save(product));
+    }
+
+    public List<ProductResponse> getTop10BestSellingProducts() {
+        return productRepository
+                .findTop10ByIsDeletedFalseAndIsActiveTrueOrderBySoldQuantityDesc()
+                .stream()
+                .map(productsMapper::toProductResponse)
+                .toList();
+    }
+
+    public List<ProductResponse> handleFilter(
+            Map<String, String> filters,
+            Integer page,
+            Integer size) {
+
+        List<ProductsEntity> products = this.productRepository
+                .findAll()
+                .stream()
+                .filter(p -> !Boolean.TRUE.equals(p.getIsDeleted()))
+                .filter(p -> Boolean.TRUE.equals(p.getIsActive()))
+                .toList();
+
+        // ===== 1️⃣ Filter by Category =====
+        String categoryId = filters.getOrDefault("categoryId", "null");
+        if (!"null".equals(categoryId)) {
+            products = products.stream()
+                    .filter(p -> p.getCategory() != null
+                            && p.getCategory().getId().equals(categoryId))
+                    .toList();
+        }
+
+        // ===== 2️⃣ Filter by Manufacturer =====
+        String manufactureId = filters.getOrDefault("manufactureId", "null");
+        if (!"null".equals(manufactureId)) {
+            products = products.stream()
+                    .filter(p -> p.getManufacturer() != null
+                            && p.getManufacturer().getId().equals(manufactureId))
+                    .toList();
+        }
+
+        // ===== 3️⃣ Filter by Origin (country) =====
+        String origin = filters.getOrDefault("origin", "null");
+        if (!"null".equals(origin)) {
+            products = products.stream()
+                    .filter(p -> p.getManufacturer() != null
+                            && p.getManufacturer().getCountry() != null
+                            && p.getManufacturer().getCountry().equalsIgnoreCase(origin))
+                    .toList();
+        }
+
+        // ===== 4️⃣ Filter by Price (FINAL PRICE) =====
+        double minPrice = Double.parseDouble(filters.getOrDefault("minPrice", "0"));
+        double maxPrice = Double.parseDouble(filters.getOrDefault("maxPrice", "0"));
+
+        if (minPrice > 0 || maxPrice > 0) {
+            products = products.stream()
+                    .filter(p -> {
+                        double originPrice = p.getOriginPrice();
+                        double discountPercent = p.getDiscount() != null
+                                ? p.getDiscount().getPercent()
+                                : 0;
+
+                        double finalPrice = originPrice * (100 - discountPercent) / 100;
+
+                        boolean greaterThanMin = minPrice <= 0 || finalPrice >= minPrice;
+                        boolean lessThanMax = maxPrice <= 0 || finalPrice <= maxPrice;
+
+                        return greaterThanMin && lessThanMax;
+                    })
+                    .toList();
+        }
+
+        // ===== 5️⃣ Paging (optional) =====
+        if (page != null && size != null && page >= 0 && size > 0) {
+            int fromIndex = page * size;
+            int toIndex = Math.min(fromIndex + size, products.size());
+
+            if (fromIndex >= products.size()) {
+                return Collections.emptyList();
+            }
+
+            products = products.subList(fromIndex, toIndex);
+        }
+
+        // ===== 6️⃣ Map to DTO =====
+        return products.stream()
+                .map(productsMapper::toProductResponse)
+                .toList();
+    }
+
+    // public List<ProductResponse> handleFilter(
+    // Map<String, String> filters,
+    // Integer page,
+    // Integer size
+    // ) {
+
+    // // int pageNumber = (page != null && page >= 0) ? page : 0;
+    // // int pageSize = (size != null && size > 0) ? size : 20;
+
+    // // Pageable pageable = PageRequest.of(pageNumber, pageSize);
+
+    // // Page<ProductsEntity> pageResult =
+    // // productRepository.filterProducts(filters, pageable);
+    // List<ProductsEntity> products = this.productRepository.findAll();
+    // String categoryId = filters.getOrDefault("categoryId", "null");
+    // if (!categoryId.equals("null")){
+    // products = products.stream()
+    // .filter(item -> item.getCategory().getId().equals(categoryId))
+    // .toList();
+    // }
+    // String manufactureId = filters.getOrDefault("manufactureId", "null");
+    // if (!manufactureId.equals("null")){
+    // products = products.stream()
+    // .filter(item -> item.getManufacturer().getId().equals(manufactureId))
+    // .toList();
+    // }
+    // String origin = filters.getOrDefault("origin", "null");
+    // if (!origin.equals("null")){
+    // products = products.stream()
+    // .filter(item ->
+    // item.getManufacturer().getCountry().toLowerCase().equals(origin.toLowerCase()))
+    // .toList();
+    // }
+    // Double minPrice = Double.parseDouble(filters.getOrDefault("minPrice", "0"));
+    // Double maxPrice = Double.parseDouble(filters.getOrDefault("maxPrice", "0"));
+    // List result = new LinkedList<>();
+    // for (ProductsEntity productsEntity : products) {
+    // Double originPrice = productsEntity.getOriginPrice();
+    // Double discountPercentage = productsEntity.getDiscount() == null
+    // : null
+    // } ? productsEntity.
+
+    // return null;
+
+    // // return pageResult.getContent()
+    // // .stream()
+    // // .map(productsMapper::toProductResponse)
+    // // .toList();
+    // }
 
 }
