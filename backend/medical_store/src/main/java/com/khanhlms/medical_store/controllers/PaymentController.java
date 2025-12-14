@@ -107,7 +107,7 @@ public class PaymentController {
                         for (OrderItemEntity orderItemEntity : items) {
                                 Integer quality = orderItemEntity.getQuantity();
                                 ProductsEntity productsEntity = orderItemEntity.getProduct();
-                                productsEntity.setSoldQuantity(productsEntity.getSoldQuantity() + quality);
+                                productsEntity.setQuantity(productsEntity.getQuantity() + quality);
                                 this.productRepository.save(productsEntity);
                         }
 
