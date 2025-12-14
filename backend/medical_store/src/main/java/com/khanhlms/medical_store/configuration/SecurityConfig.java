@@ -64,6 +64,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
+                        .requestMatchers("/ws-chat/**").permitAll()   // 👈 BẮT BUỘC
                         .requestMatchers("/uploads/**").permitAll()
                         .requestMatchers(PREFIX_API+"/ai/**").permitAll()
                         .requestMatchers(HttpMethod.GET,buildWithPrefix(PUBLIC_END_POINT_GET, PREFIX_API)).permitAll()
