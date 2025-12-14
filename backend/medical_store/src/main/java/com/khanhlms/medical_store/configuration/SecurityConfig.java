@@ -65,6 +65,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/ws-chat/**").permitAll()   // 👈 BẮT BUỘC
+                        .requestMatchers( PREFIX_API +"/chat/**").permitAll()
                         .requestMatchers("/uploads/**").permitAll()
                         .requestMatchers(PREFIX_API+"/ai/**").permitAll()
                         .requestMatchers(HttpMethod.GET,buildWithPrefix(PUBLIC_END_POINT_GET, PREFIX_API)).permitAll()

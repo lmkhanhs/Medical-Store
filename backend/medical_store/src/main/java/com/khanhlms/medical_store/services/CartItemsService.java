@@ -70,7 +70,7 @@ public class CartItemsService {
         String itemCartId = cartItemQuanityRequest.getItemCartId();
         Integer quanlity = cartItemQuanityRequest.getQuantity();
 
-        if (quanlity < 0){
+        if (quanlity < 1){
             throw new AppException(ErrorCode.INVALID_REQUEST);
         }
         CartItemEntity cartItemEntity =  this.cartItemsRespository.findById(itemCartId)
