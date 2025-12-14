@@ -9,11 +9,15 @@ import com.khanhlms.medical_store.dtos.products.response.CategoryProductCount;
 import com.khanhlms.medical_store.dtos.products.response.CreateProductResponse;
 import com.khanhlms.medical_store.dtos.products.response.DetailProduct;
 import com.khanhlms.medical_store.dtos.products.response.ProductResponse;
+import com.khanhlms.medical_store.entities.CategoryEntity;
 import com.khanhlms.medical_store.entities.IngredientEntity;
+import com.khanhlms.medical_store.entities.ManufacturerEntity;
 import com.khanhlms.medical_store.entities.ProductsEntity;
 import com.khanhlms.medical_store.exceptions.AppException;
 import com.khanhlms.medical_store.exceptions.ErrorCode;
 import com.khanhlms.medical_store.mapper.ProductsMapper;
+import com.khanhlms.medical_store.repositories.CategoriesRepository;
+import com.khanhlms.medical_store.repositories.ManufacturerRepository;
 import com.khanhlms.medical_store.repositories.ProductRepository;
 import com.khanhlms.medical_store.utills.BaseRedisUtils;
 import com.khanhlms.medical_store.utills.ReflexUtills;
@@ -23,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
+import org.hibernate.engine.spi.ManagedEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -42,6 +47,9 @@ public class ProductsSercvice {
     ProductRepository productRepository;
     ProductsMapper productsMapper;
     BaseRedisUtils redisUtils;
+    ManufacturerRepository manufacturerRepository;
+    CategoriesRepository categoriesRepository;
+
     private ObjectMapper objectMapper = new ObjectMapper();
 
     public CreateProductResponse createProduct(CreateProductRequest request, List<IngredientRequest> ingredients) {
@@ -268,18 +276,21 @@ public class ProductsSercvice {
         // ===== 1️⃣ Filter by Category =====
         String categoryId = filters.getOrDefault("categoryId", "null");
         if (!"null".equals(categoryId)) {
+            CategoryEntity categoryEntity = this.categoriesRepository.findById(categoryId).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
+        
             products = products.stream()
                     .filter(p -> p.getCategory() != null
-                            && p.getCategory().getId().equals(categoryId))
+                             && p.getCategory().getId().equals(categoryEntity.getId()))
                     .toList();
         }
 
         // ===== 2️⃣ Filter by Manufacturer =====
-        String manufactureId = filters.getOrDefault("manufactureId", "null");
+        String manufactureId = filters.getOrDefault("manufacturerId", "null");
         if (!"null".equals(manufactureId)) {
+            ManufacturerEntity manufacturerEntity = this.manufacturerRepository.findById(manufactureId)
+                                                .orElseThrow(() -> new AppException(ErrorCode.MANUFACTURER_NOT_FOUND));                   
             products = products.stream()
-                    .filter(p -> p.getManufacturer() != null
-                            && p.getManufacturer().getId().equals(manufactureId))
+                    .filter(p -> p.getManufacturer().getId().equals(manufactureId))
                     .toList();
         }
 
@@ -332,55 +343,5 @@ public class ProductsSercvice {
                 .map(productsMapper::toProductResponse)
                 .toList();
     }
-
-    // public List<ProductResponse> handleFilter(
-    // Map<String, String> filters,
-    // Integer page,
-    // Integer size
-    // ) {
-
-    // // int pageNumber = (page != null && page >= 0) ? page : 0;
-    // // int pageSize = (size != null && size > 0) ? size : 20;
-
-    // // Pageable pageable = PageRequest.of(pageNumber, pageSize);
-
-    // // Page<ProductsEntity> pageResult =
-    // // productRepository.filterProducts(filters, pageable);
-    // List<ProductsEntity> products = this.productRepository.findAll();
-    // String categoryId = filters.getOrDefault("categoryId", "null");
-    // if (!categoryId.equals("null")){
-    // products = products.stream()
-    // .filter(item -> item.getCategory().getId().equals(categoryId))
-    // .toList();
-    // }
-    // String manufactureId = filters.getOrDefault("manufactureId", "null");
-    // if (!manufactureId.equals("null")){
-    // products = products.stream()
-    // .filter(item -> item.getManufacturer().getId().equals(manufactureId))
-    // .toList();
-    // }
-    // String origin = filters.getOrDefault("origin", "null");
-    // if (!origin.equals("null")){
-    // products = products.stream()
-    // .filter(item ->
-    // item.getManufacturer().getCountry().toLowerCase().equals(origin.toLowerCase()))
-    // .toList();
-    // }
-    // Double minPrice = Double.parseDouble(filters.getOrDefault("minPrice", "0"));
-    // Double maxPrice = Double.parseDouble(filters.getOrDefault("maxPrice", "0"));
-    // List result = new LinkedList<>();
-    // for (ProductsEntity productsEntity : products) {
-    // Double originPrice = productsEntity.getOriginPrice();
-    // Double discountPercentage = productsEntity.getDiscount() == null
-    // : null
-    // } ? productsEntity.
-
-    // return null;
-
-    // // return pageResult.getContent()
-    // // .stream()
-    // // .map(productsMapper::toProductResponse)
-    // // .toList();
-    // }
 
 }
