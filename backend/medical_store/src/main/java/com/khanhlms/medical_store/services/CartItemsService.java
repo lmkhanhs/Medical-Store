@@ -39,8 +39,8 @@ public class CartItemsService {
         if (quantity <= 0) {
             throw new  AppException(ErrorCode.INVALID_REQUEST);
         }
-        if (this.cartItemsRespository.findByProductAndUser(product, user).isPresent()){
-            cartItem = this.cartItemsRespository.findByProductAndUser(product, user).get();
+        if (this.cartItemsRespository.findByProductAndUserAndDeletedFalse(product, user).isPresent()){
+            cartItem = this.cartItemsRespository.findByProductAndUserAndDeletedFalse(product, user).get();
             cartItem.setQuantity(cartItem.getQuantity() + quantity);
         }
         else {
