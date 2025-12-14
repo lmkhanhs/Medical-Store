@@ -81,5 +81,12 @@ public class CartItemsService {
         return this.cartItemsRespository.save(cartItemEntity);
 
     }
+    public CartItemResponse deleteCartItem(String username, String cartId){
+        UserEntity entity =  this.userRepository.findByUsername(username).get();
+        CartItemEntity cartItemEntity = this.cartItemsRespository.findById(cartId)
+                                    .orElseThrow(() -> new AppException(ErrorCode.CARD_ITEM_NOT_FOUND));
+        cartItemEntity.setDeleted(true);
+        return this.cartsMapper.toCartItemResponse(this.cartItemsRespository.save(cartItemEntity));
+    }
 
 }

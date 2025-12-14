@@ -56,4 +56,14 @@ public class CartItemsController {
                 .data(this.cartItemsService.handMyCartItems(username,pageable ))
                 .build();
     }
+    @DeleteMapping("/carts/{id}")
+    public ApiResponse<CartItemResponse> deleteCartItem(@PathVariable String id){
+        String username = this.authenticationUtills.getUserName();
+
+        return ApiResponse.<CartItemResponse>builder()
+                    .code(200)
+                    .message("deleted cart item")
+                    .data(this.cartItemsService.deleteCartItem(username, id))
+                    .build();
+    }
 }
