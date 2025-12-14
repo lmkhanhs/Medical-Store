@@ -50,7 +50,7 @@ public abstract class ProductsMapper {
     }
     @Named("mapDiscountPrice")
     protected Double mapDiscountPrice(ProductsEntity productsEntities) {
-        if (productsEntities.getDiscount() == null || productsEntities.getDiscount() .getPercent() == null) {return null;}
+        if (productsEntities.getDiscount() == null || productsEntities.getDiscount() .getPercent() == null) {return productsEntities.getOriginPrice();}
         double discountPercent = productsEntities.getDiscount().getPercent();
         return productsEntities.getOriginPrice() * (100 - discountPercent) / 100;
     }
