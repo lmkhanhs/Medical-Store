@@ -86,11 +86,11 @@ public class UserController {
     }
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/status")
-    public ApiResponse<UserResponse> channgeUserStatus(@RequestParam String id) {
+    public ApiResponse<UserResponse> channgeUserStatus(@RequestParam String id, @RequestParam Boolean isActive) {
         return ApiResponse.<UserResponse>builder()
                 .code(200)
                 .message("change status user successfully ")
-                .data(this.userService.handleChangeStatusUser(id))
+                .data(this.userService.handleChangeStatusUser(id, isActive))
                 .build();
     }
     

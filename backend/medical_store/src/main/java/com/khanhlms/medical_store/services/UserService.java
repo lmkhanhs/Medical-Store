@@ -84,14 +84,14 @@ public class UserService {
         return this.userRepository.count();
     }
     
-    public UserResponse handleChangeStatusUser(String userId){
+    public UserResponse handleChangeStatusUser(String userId, boolean isActive){
         UserEntity entity = this.userRepository.findById(userId).orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED));
         RoleEntity roleADMIN = this.roleRepository.findByName(RoleEnums.ADMIN.toString()).get();
         if ( entity.getRoles().contains(roleADMIN) ) {
             throw new AppException(ErrorCode.INVALID_REQUEST);
         }
-        if (entity.getIsActive() == true) entity.setIsActive(false);
-        else entity.setIsActive(true);
+        
+        entity.setIsActive(isActive);
         return this.userMapper.toResponse(this.userRepository.save(entity));
     }
 
