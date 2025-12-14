@@ -14,6 +14,7 @@ import com.khanhlms.medical_store.enums.PaymentStatus;
 import com.khanhlms.medical_store.exceptions.AppException;
 import com.khanhlms.medical_store.exceptions.ErrorCode;
 import com.khanhlms.medical_store.mapper.OrderMapper;
+import com.khanhlms.medical_store.repositories.CartItemsRespository;
 import com.khanhlms.medical_store.repositories.OrderRepository;
 import com.khanhlms.medical_store.repositories.ProductRepository;
 import com.khanhlms.medical_store.repositories.UserRepository;
@@ -39,11 +40,13 @@ public class OrderService {
     final ProductRepository productRepository;
     final VnPayService vnPayService;
     final OrderMapper orderMapper;
+    final CartItemsRespository cartItemsRespository;
     @Transactional
     public CreateOrderResponse createOrder(HttpServletRequest httpServletRequest, String username, CreateOrderRequest request) {
         
         List<ItemOrder> itemOrders = request.getItemOrders();
         List<OrderItemEntity> orderItems = new LinkedList<>();
+        
         Double totalAmount = 0.0 ;
         UserEntity user = userRepository.findByUsername(username).get();
         String status = OrderStatus.PENDING.toString();
@@ -72,6 +75,9 @@ public class OrderService {
             if (product.getQuantity() - quantity > 0) {
                 product.setQuantity(product.getQuantity() - quantity);
                 this.productRepository.save(product);
+                CartItemEntity cartItemEntity = this.cartItemsRespository.findByProductAndUserAndDeletedFalse(product, user).get();
+                cartItemEntity.setDeleted(true);
+                this.cartItemsRespository.save(cartItemEntity);
             }else{
                 throw new AppException(ErrorCode.QUANTITY_EXCEEDS_STOCK);
             }
