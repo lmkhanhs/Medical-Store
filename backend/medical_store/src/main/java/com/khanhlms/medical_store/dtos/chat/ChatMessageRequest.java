@@ -12,7 +12,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class ChatMessageRequest {
-    private String sender;
-    private String receiver;
+    private String senderId;
+    private String receiverId;
     private String content;
 }

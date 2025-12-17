@@ -37,6 +37,15 @@ public class UserEntity extends BaseEntity implements UserDetails {
     Boolean isActive;
     String avatarUrl;
 
+    // Tin nhắn gửi
+    @OneToMany(mappedBy = "sender")
+    List<ChatMessageEntity> sentMessages;
+
+    // Tin nhắn nhận
+    @OneToMany(mappedBy = "receiver")
+    List<ChatMessageEntity> receivedMessages;
+
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     List<CartItemEntity> cartItems;
 

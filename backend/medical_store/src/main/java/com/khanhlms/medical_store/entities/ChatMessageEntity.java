@@ -20,18 +20,30 @@ public class ChatMessageEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
 
-    @Column(nullable = false)
-    String sender;
+    // Người gửi
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sender_id", nullable = false)
+    UserEntity sender;
 
-    @Column(nullable = false)
-    String receiver;
+    // Người nhận
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "receiver_id", nullable = false)
+    UserEntity receiver;
 
     @Column(columnDefinition = "TEXT", nullable = false)
     String content;
 
     @Column(nullable = false)
-    Boolean isDeleted = false; // 👈 nên default
+    Boolean isDeleted = false;
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     LocalDateTime createdAt;
+
+    @PrePersist
+    void prePersist() {
+        this.createdAt = LocalDateTime.now();
+        if (this.isDeleted == null) {
+            this.isDeleted = false;
+        }
+    }
 }

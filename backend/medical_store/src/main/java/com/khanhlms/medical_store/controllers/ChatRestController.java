@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.khanhlms.medical_store.dtos.chat.ChatMessageRequest;
+import com.khanhlms.medical_store.dtos.chat.response.MessageResponse;
 import com.khanhlms.medical_store.dtos.response.ApiResponse;
+import com.khanhlms.medical_store.dtos.response.UserResponse;
 import com.khanhlms.medical_store.entities.ChatMessageEntity;
 import com.khanhlms.medical_store.services.ChatMessageService;
 
@@ -24,29 +26,33 @@ public class ChatRestController {
 
     private final ChatMessageService chatMessageService;
 
-    @GetMapping("/chat/history")
-    public ApiResponse<List<ChatMessageEntity>> getChatHistory(
-            @RequestParam String sender,
-            @RequestParam String receiver
-    ) {
-        return ApiResponse.<List<ChatMessageEntity>>builder()
-                .code(200)
-                .message("get message ")
-                .data(this.chatMessageService.getMessages(sender, receiver))
-                .build();
-    }
+    // @GetMapping("/chat/history")
+    // public ApiResponse<List<ChatMessageEntity>> getChatHistory(
+    //         @RequestParam String sender,
+    //         @RequestParam String receiver
+    // ) {
+    //     return ApiResponse.<List<ChatMessageEntity>>builder()
+    //             .code(200)
+    //             .message("get message ")
+    //             .data(this.chatMessageService.getMessages(sender, receiver))
+    //             .build();
+    // }
     @PostMapping("/chat/")
-    public ApiResponse<ChatMessageEntity> createChat(@RequestBody ChatMessageRequest chatMessageRequest) {
+    public ApiResponse<MessageResponse> createChat(@RequestBody ChatMessageRequest chatMessageRequest) {
         
-        return ApiResponse.<ChatMessageEntity>builder()
+        return ApiResponse.<MessageResponse>builder()
                     .code(200)
                     .message("create message successfully!")
-                    .data(this.chatMessageService.saveMessage(chatMessageRequest.getSender(), chatMessageRequest.getReceiver(), chatMessageRequest.getContent()))
+                    .data(this.chatMessageService.saveMessage(chatMessageRequest))
                     .build();
     }
     @GetMapping("/chat/people")
-    public String getMethodName(@RequestParam String param) {
-        return new String();
+    public ApiResponse<List<UserResponse>> getUsers(@RequestParam String ownerId) {
+        return ApiResponse.<List<UserResponse>>builder()
+                .code(200)
+                .message("get user chat with ownerId: "+ ownerId)
+                .data(this.chatMessageService.getAllUserChatWith(ownerId))
+                .build();
     }
     
     

@@ -17,26 +17,26 @@ public class ChatWebSocketController {
     private final SimpMessagingTemplate messagingTemplate;
     private final ChatMessageService chatMessageService;
 
-    @MessageMapping("/chat.send")
-    public void sendMessage(ChatMessageRequest request) {
+//     @MessageMapping("/chat.send")
+//     public void sendMessage(ChatMessageRequest request) {
 
-        // 1️⃣ lưu DB
-        ChatMessageEntity saved = chatMessageService.saveMessage(
-                request.getSender(),
-                request.getReceiver(),
-                request.getContent()
-        );
+//         // 1️⃣ lưu DB
+//         ChatMessageEntity saved = chatMessageService.saveMessage(
+//                 request.getSenderId(),
+//                 request.getReceiverId(),
+//                 request.getContent()
+//         );
 
-        // 2️⃣ gửi cho người nhận
-        messagingTemplate.convertAndSend(
-                "/queue/chat." + request.getReceiver(),
-                saved
-        );
+//         // 2️⃣ gửi cho người nhận
+//         messagingTemplate.convertAndSend(
+//                 "/queue/chat." + request.getReceiverId(),
+//                 saved
+//         );
 
-        // 3️⃣ gửi lại cho người gửi
-        messagingTemplate.convertAndSend(
-                "/queue/chat." + request.getSender(),
-                saved
-        );
-    }
+//         // 3️⃣ gửi lại cho người gửi
+//         messagingTemplate.convertAndSend(
+//                 "/queue/chat." + request.getSenderId(),
+//                 saved
+//         );
+//     }
 }
