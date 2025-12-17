@@ -13,7 +13,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.service.annotation.PutExchange;
 
 import java.util.List;
 
@@ -55,6 +54,15 @@ public class ManufacturerController {
                 .code(200)
                 .message("Update manufacture successfully!")
                 .data(manufacturerService.handUpdateManufacturer(id, request))
+                .build();
+    }
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @DeleteMapping(value = "/manufacturers/{id}")
+    public ApiResponse<Void> deleteManufacture(@PathVariable String id){
+        this.manufacturerService.handleDeletedManufacture(id);
+        return ApiResponse.<Void>builder()
+                .code(204)
+                .message("delete manufacture successfully!")
                 .build();
     }
 }

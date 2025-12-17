@@ -44,6 +44,7 @@ public class ManufacturerService {
     public List<ManufacturerResponse> getAllManufacturers(){
         List<ManufacturerEntity> manufacturerEntities = manufacturerRepository.findAll();
         return manufacturerEntities.stream()
+                .filter(item -> item.getDeleted() == false)
                 .map(item -> manufacturerMapper.toResponse(item))
                 .toList();
     }
@@ -57,6 +58,13 @@ public class ManufacturerService {
         ReflexUtills.mergeNonNullFields(entity, updateEntity);
         this.manufacturerRepository.save(entity);
         return  this.manufacturerMapper.toResponse(entity);
+    }
+    
+    public void handleDeletedManufacture(String id){
+        ManufacturerEntity entity = this.manufacturerRepository.findById(id)
+                        .orElseThrow(()-> new AppException(ErrorCode.MANUFACTURER_NOT_FOUND));
+        entity.setDeleted(true);
+        this.manufacturerRepository.save(entity);
     }
 
 }
