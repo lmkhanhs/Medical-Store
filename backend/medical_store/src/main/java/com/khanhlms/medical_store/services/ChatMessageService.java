@@ -63,8 +63,8 @@ public class ChatMessageService {
     //             );
     // }
 
-    public List<UserResponse> getAllUserChatWith(String ownerId){
-        UserEntity userOwner = this.userRepository.findById(ownerId)
+    public List<UserResponse> getAllUserChatWith(String username){
+        UserEntity userOwner = this.userRepository.findByUsername(username)
                                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         List<UserEntity> users = new LinkedList<>(); 

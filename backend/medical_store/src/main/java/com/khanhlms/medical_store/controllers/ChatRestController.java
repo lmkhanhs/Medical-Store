@@ -13,6 +13,7 @@ import com.khanhlms.medical_store.dtos.response.ApiResponse;
 import com.khanhlms.medical_store.dtos.response.UserResponse;
 import com.khanhlms.medical_store.entities.ChatMessageEntity;
 import com.khanhlms.medical_store.services.ChatMessageService;
+import com.khanhlms.medical_store.utills.AuthenticationUtills;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class ChatRestController {
 
     private final ChatMessageService chatMessageService;
-
+    private final AuthenticationUtills authenticationUtills; 
     // @GetMapping("/chat/history")
     // public ApiResponse<List<ChatMessageEntity>> getChatHistory(
     //         @RequestParam String sender,
@@ -47,11 +48,12 @@ public class ChatRestController {
                     .build();
     }
     @GetMapping("/chat/people")
-    public ApiResponse<List<UserResponse>> getUsers(@RequestParam String ownerId) {
+    public ApiResponse<List<UserResponse>> getUsers() {
+        String username = authenticationUtills.getUserName();
         return ApiResponse.<List<UserResponse>>builder()
                 .code(200)
-                .message("get user chat with ownerId: "+ ownerId)
-                .data(this.chatMessageService.getAllUserChatWith(ownerId))
+                .message("get user chat with :" + username)
+                .data(this.chatMessageService.getAllUserChatWith(username))
                 .build();
     }
     
