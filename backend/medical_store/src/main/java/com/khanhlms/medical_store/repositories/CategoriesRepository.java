@@ -11,5 +11,5 @@ import java.util.Optional;
 @Repository
 public interface CategoriesRepository extends JpaRepository<CategoryEntity, String> {
     Optional<CategoryEntity> findByName(String name);
-    Page<CategoryEntity> findAll(Pageable pageable);
+    Page<CategoryEntity> findAllByDeletedFalse(Pageable pageable);
 }

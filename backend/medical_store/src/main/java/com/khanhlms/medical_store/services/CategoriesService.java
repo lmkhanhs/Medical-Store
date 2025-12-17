@@ -39,7 +39,7 @@ public class CategoriesService {
         return this.categoriesMapper.toResponse(categoriesRepository.save(categoryEntity));
     }
     public List<CategoryResponse> handfindAll(Pageable pageable) {
-        return this.categoriesRepository.findAll(pageable)
+        return this.categoriesRepository.findAllByDeletedFalse(pageable)
                 .getContent()
                 .stream()
                 .map(item -> this.categoriesMapper.toResponse(item))
@@ -54,5 +54,12 @@ public class CategoriesService {
                                         .orElseThrow(()-> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
         ReflexUtills.mergeNonNullFields(categoryEntity, updateEntity);
         return categoriesMapper.toResponse(this.categoriesRepository.save(categoryEntity));
+    }
+
+    public void handleDeleteCategory(String id){
+        CategoryEntity entity = this.categoriesRepository.findById(id)
+                                .orElseThrow(()->new AppException(ErrorCode.MANUFACTURER_NOT_FOUND));
+        entity.setDeleted(true);
+        this.categoriesRepository.save(entity);
     }
 }
