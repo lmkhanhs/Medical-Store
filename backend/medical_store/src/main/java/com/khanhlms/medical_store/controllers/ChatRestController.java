@@ -27,17 +27,17 @@ public class ChatRestController {
 
     private final ChatMessageService chatMessageService;
     private final AuthenticationUtills authenticationUtills; 
-    // @GetMapping("/chat/history")
-    // public ApiResponse<List<ChatMessageEntity>> getChatHistory(
-    //         @RequestParam String sender,
-    //         @RequestParam String receiver
-    // ) {
-    //     return ApiResponse.<List<ChatMessageEntity>>builder()
-    //             .code(200)
-    //             .message("get message ")
-    //             .data(this.chatMessageService.getMessages(sender, receiver))
-    //             .build();
-    // }
+    @GetMapping("/chat/history")
+    public ApiResponse<List<MessageResponse>> getChatHistory(
+            @RequestParam String friendId
+    ) {
+        String username = authenticationUtills.getUserName();
+        return ApiResponse.<List<MessageResponse>>builder()
+                .code(200)
+                .message("get message ")
+                .data(this.chatMessageService.getChatWithUser(username, friendId))
+                .build();
+    }
     @PostMapping("/chat/")
     public ApiResponse<MessageResponse> createChat(@RequestBody ChatMessageRequest chatMessageRequest) {
         

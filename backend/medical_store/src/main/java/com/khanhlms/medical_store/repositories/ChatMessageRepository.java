@@ -12,12 +12,7 @@ import com.khanhlms.medical_store.entities.UserEntity;
 
 @Repository
 public interface ChatMessageRepository extends JpaRepository<ChatMessageEntity, String> {
-    // List<ChatMessageEntity>findBySenderAndIsDeletedFalseOrderByCreatedAtDesc(String sender);
-    // List<ChatMessageEntity>findBySenderAndReceiverAndIsDeletedFalseOrderByCreatedAtDesc(
-    //     String sender,
-    //     String receiver
-    // );
-
+    List<ChatMessageEntity> findAllBySenderAndReceiver(UserEntity sender, UserEntity receiver);
     List<ChatMessageEntity> findAllBySender(UserEntity sender);
     List<ChatMessageEntity> findAllByReceiver(UserEntity receiver);
 
