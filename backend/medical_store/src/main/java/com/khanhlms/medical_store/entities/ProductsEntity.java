@@ -19,6 +19,7 @@ public class ProductsEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
+    @Column(columnDefinition = "TEXT")
     String name;
     @Column(columnDefinition = "TEXT")
     String description;
@@ -27,20 +28,25 @@ public class ProductsEntity extends BaseEntity {
     DiscountEntity discount;
     Boolean precription;
     Double ratingAvg;
+    
     String unit;
     @Column(nullable = false)
     Date productDate;
     @Column(nullable = false)
     Date expirationDate;
     Integer quantity;
+
     String currency;
     Integer soldQuantity;
     Integer position;
+    @Column(columnDefinition = "TEXT")
     String sideEffect; // tác dụng phụ
     String note;
+    @Column(columnDefinition = "TEXT")
     String preserve; // cach bao quan
-    @Column(name = "product_usage")
+    @Column(name = "product_usage", columnDefinition = "TEXT")
     String usage; // cách sử dụng
+    @Column(columnDefinition = "TEXT")
     String benefit; // lợi ích
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     List<IngredientEntity> ingredients;
