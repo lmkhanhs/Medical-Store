@@ -10,7 +10,7 @@ app:
       expiresRefresh: 30000 # 3000 second = 50p
       secret: fEJ6qu3MQ1pwdpRYxhiXNpor7jNV6tCdhw73m9rR5TfH5rS6Zq1tVDsUooXljGi3
     clodinary:
-      url: cloudinary://673758235311112:lQ-W_bCswUJHcqmGXVenasImLnY@dqtj816ds
+      url: cloudinary://517415745711638:cjlC-HkUHayjU0J18PQzQjL6bvQ@dlwld3eeg
     file:
       prefix: /uploads
 vnpay:
