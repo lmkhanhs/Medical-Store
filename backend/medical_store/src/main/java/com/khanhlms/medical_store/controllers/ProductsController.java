@@ -256,5 +256,14 @@ public class ProductsController {
                                 .data(productsSercvice.getTop10BestSellingProducts())
                                 .build();
         }
+        @GetMapping("/products/flash-selling")
+        public ApiResponse<List<ProductResponse>> getFlashSell(@RequestParam Integer limit){
+                if (limit == null) limit = 10;
+                return ApiResponse.<List<ProductResponse>>builder()
+                                .code(200)
+                                .message("Get prodduct flask sell")
+                                .data(this.productsSercvice.getProductFlashSell(limit))
+                                .build();
+        }
 
 }

@@ -343,5 +343,29 @@ public class ProductsSercvice {
                 .map(productsMapper::toProductResponse)
                 .toList();
     }
+    public List<ProductResponse> getProductFlashSell(int limit) {
+
+    return productRepository.findAll()
+            .stream()
+            // 1️⃣ chỉ lấy sản phẩm hợp lệ
+            .filter(p -> Boolean.TRUE.equals(p.getIsActive()))
+            .filter(p -> Boolean.FALSE.equals(p.getIsDeleted()))
+            .filter(p -> p.getDiscount() != null)
+
+            // 2️⃣ sắp xếp theo % giảm giá giảm dần
+            .sorted((p1, p2) -> 
+                Double.compare(
+                    p2.getDiscount().getPercent(),
+                    p1.getDiscount().getPercent()
+                )
+            )
+
+            // 3️⃣ giới hạn số lượng
+            .limit(limit)
+
+            // 4️⃣ map sang DTO
+            .map(productsMapper::toProductResponse)
+            .toList();
+}
 
 }
