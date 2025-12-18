@@ -11,7 +11,6 @@ import com.khanhlms.medical_store.dtos.chat.ChatMessageRequest;
 import com.khanhlms.medical_store.dtos.chat.response.MessageResponse;
 import com.khanhlms.medical_store.dtos.response.ApiResponse;
 import com.khanhlms.medical_store.dtos.response.UserResponse;
-import com.khanhlms.medical_store.entities.ChatMessageEntity;
 import com.khanhlms.medical_store.services.ChatMessageService;
 import com.khanhlms.medical_store.utills.AuthenticationUtills;
 
