@@ -94,5 +94,8 @@ public class UserService {
         entity.setIsActive(isActive);
         return this.userMapper.toResponse(this.userRepository.save(entity));
     }
-
+    public ProfileResponse handleHasAdminInfo(){
+        UserEntity entity = this.userRepository.findByUsername("admin").orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED));
+        return userMapper.toProfileResponse(entity);
+    }
 }

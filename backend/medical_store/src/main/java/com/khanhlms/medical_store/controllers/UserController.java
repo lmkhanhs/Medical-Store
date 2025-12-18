@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.awt.*;
 import java.util.List;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 
@@ -91,6 +89,14 @@ public class UserController {
                 .code(200)
                 .message("change status user successfully ")
                 .data(this.userService.handleChangeStatusUser(id, isActive))
+                .build();
+    }
+    @GetMapping("/admin-info")
+    public ApiResponse<ProfileResponse> hasAdmin(){
+        return ApiResponse.<ProfileResponse>builder()
+                .code(200)
+                .message("get Admin infomation")
+                .data(this.userService.handleHasAdminInfo())
                 .build();
     }
     

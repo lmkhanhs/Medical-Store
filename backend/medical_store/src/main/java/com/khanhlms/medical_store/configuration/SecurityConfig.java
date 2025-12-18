@@ -46,7 +46,7 @@ public class SecurityConfig {
     final PasswordEncoder passwordEncoder;
 
     private final String[] PUBLIC_END_POINT_TEST = { "/api/v1/users"};
-    private final String[] PUBLIC_END_POINT_GET = {"/categories",
+    private final String[] PUBLIC_END_POINT_GET = {"/categories", "/users/admin-info",
         "/products", "/products/detail/{id}", "/products/search", "/products/filter",
         "/payment/vnpay/return","/manufacturers", "/products/top-selling", "/products/flash-selling"
     };
