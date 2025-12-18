@@ -18,6 +18,7 @@ public abstract class UserMapper {
     protected CloudinaryUtils cloudinaryUtils;
 
     public abstract UserResponse toResponse(UserEntity userEntity);
+    @Mapping(source = "id", target = "id")
     public abstract ProfileResponse toProfileResponse(UserEntity userEntity);
     @Mappings({
             @Mapping(source = "image", target = "avatarUrl", qualifiedByName = "mapImage" )

@@ -10,6 +10,7 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProfileResponse {
+    String id;
     String email;
     String fullName;
     String phoneNumber;
