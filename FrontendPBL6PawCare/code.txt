@@ -1,0 +1,12 @@
+"C:\Users\Lenovo\Desktop\aws.pem"
+
+scp -i C:\Users\Lenovo\Desktop\aws.pem -r PBL6_PawCare\dist ubuntu@13.231.191.87:/home/ubuntu/
+
+
+scp -i C:\Users\Lenovo\Desktop\aws.pem -r D:\pbl6-frontend\PBL6_PawCare\dist ubuntu@13.231.191.87:/home/ubuntu/
+///
+sudo rm -rf /var/www/html/*
+sudo cp -r ~/dist/* /var/www/html/
+///
+sudo nginx -t
+sudo systemctl reload nginx

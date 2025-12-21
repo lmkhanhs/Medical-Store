@@ -1,0 +1,66 @@
+scp -i C:\Users\Lenovo\Desktop\aws.pem app.jar Dockerfile ubuntu@13.231.191.87:/home/ubuntu/
+
+docker build -t medical-store-app .
+
+docker run -d --name medical-store --network=host medical-store-app
+
+
+/// myysql
+
+sudo mysql
+
+CREATE DATABASE pbl6
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
+
+SHOW DATABASES;
+
+//
+ALTER USER 'root'@'localhost'
+IDENTIFIED WITH mysql_native_password
+BY '123456';
+
+//
+FLUSH PRIVILEGES;
+
+//
+
+sudo apt update
+sudo apt install -y redis-server
+
+// AI 
+cd ~/AI/RunAIPawCare
+source venv/bin/activate
+//
+
+sudo nano /etc/systemd/system/pawcare-ai.service
+//
+[Unit]
+Description=PawCare AI Flask Server
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/AI/RunAIPawCare
+
+# dùng đúng venv
+Environment="PATH=/home/ubuntu/AI/RunAIPawCare/venv/bin"
+
+ExecStart=/home/ubuntu/AI/RunAIPawCare/venv/bin/python /home/ubuntu/AI/RunAIPawCare/api_server_nhandiencontrung_2model_fixed.py
+
+Restart=always
+RestartSec=3
+
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+//
+sudo systemctl daemon-reload
+sudo systemctl enable pawcare-ai
+sudo systemctl start pawcare-ai
+sudo systemctl status pawcare-ai --no-pager
+// log 
+
+sudo journalctl -u pawcare-ai -n 200 --no-pager

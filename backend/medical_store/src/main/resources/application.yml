@@ -17,7 +17,7 @@ vnpay:
   tmnCode: RMEWAEMU
   hashSecret: GSNJ39IBETFV4UBG50R9QZP9GQEDSYMQ
   payUrl: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
-  returnUrl: https://treponemal-kiara-unpurely.ngrok-free.dev/api/v1/payment/vnpay/return
+  returnUrl: http://13.231.191.87/api/v1/payment/vnpay/return
 spring:
     application:
         name: medical_store
